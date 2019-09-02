@@ -2,6 +2,10 @@
 
 ##### 本项目是一个前后端分离项目 前台有LayUI做界面Vue数据渲染 后台SpringBoot+Swagger2 做api接口  JWT token做权限验证
 
+## 前台演示地址 ：http://mall.lqcnb.cn/html/index.html
+
+## 后台演示地址 ：http://mall.lqcnb.cn/views/index.html
+
 ## 技术栈
 
 - SpingBoot
