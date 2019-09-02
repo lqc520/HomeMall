@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>家居商城-地址</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" href="/plugin/layui/css/layui.css">
+  <link rel="stylesheet" href="/common/css/index.css">
+
+</head>
+<body class="user">
+
+<!--jquery-->
+<script src="/plugin/jquery/jquery.js"></script>
+<!--页面顶部-->
+<div class="house-header">
+  <script>
+    $(function(){$('.house-header').load('./header.html');});
+  </script>
+</div>
+
+<div class="layui-container userpublic useradd" id="main">
+  <div class="layui-row layui-col-space20">
+    <p class="layui-hide-xs title">首页 &gt; <span>个人中心</span></p>
+    <div class="layui-col-sm2">
+      <ul class="user-list">
+        <li><a href="user.html">个人中心</a></li>
+        <li><a href="">消息中心</a></li>
+        <li class="active"><a href="useradd.html">地址管理</a></li>
+        <li><a href="usercol.html">我的收藏</a></li>
+        <li><a href="">优惠券</a></li>
+        <li><a href="">服务中心</a></li>
+      </ul>
+    </div>
+    <div class="layui-col-sm10">
+      <table class="layui-table" id="user-address" lay-filter="user-address"></table>
+
+      <button class="layui-btn layui-btn-primary address-add" @click="add"><i class="layui-icon layui-icon-add-1">添加按钮</i></button>
+    </div>
+  </div>
+</div>
+
+
+<div class="house-footer">
+  <script>
+    $(function(){$('.house-footer').load('./footer.html');});
+  </script>
+</div>
+
+
+<script type="text/html" id="spaceTpl">
+  {{#  if(d.isDefault==0){ }}
+    <span id="default">默认</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="addressTpl">
+  <a lay-event="del" style="color: #e39d55; margin-right: 15px; cursor: pointer;">删除</a>
+  <a lay-event="edit" style="color: #e39d55; cursor: pointer;">编辑</a>
+</script>
+
+
+<!--vue-->
+<script src="/plugin/vue/vue.js"></script>
+<!--vue-cookies-->
+<script src="/plugin/vue-cookies/vue-cookies.js"></script>
+<!--axios-->
+<script src="/plugin/axios/axios.js"></script>
+<!--layui-->
+<script src="/plugin/layui/layui.all.js"></script>
+<!--qs -->
+<script src="/plugin/qs/qs.js"></script>
+<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+<!--[if lt IE 9]>
+  <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+  <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+<script>
+  layui.config({
+    base: '/common/js/' 
+  }).use('house');
+  new Vue({
+    el:'#main',
+    data(){
+      return{
+          token:'',
+      }
+    },mounted(){
+      //地址管理——表格
+      //  http://localhost:8080/
+      this.token=this.$cookies.get("token");
+      // axios.defaults.baseURL ='http://mall.jynb.xyz:9000/api/';
+      // axios.defaults.baseURL ='http://mall.lqcnb.cn:9000/api/';
+      axios.defaults.baseURL ='http://localhost:8080/api/';
+      axios.defaults.timeout =6000;
+      axios.interceptors.request.use(config => {
+                config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+                if (this.token) {
+                  config.headers.common['token'] =this.token;
+                }
+                return config
+              },
+              err => {return Promise.reject(err)}
+      );
+
+      layui.use('table', ()=> {
+                const table = layui.table;
+        table.render({
+          elem: '#user-address'
+          ,url: 'http://localhost:8080/api/address/getById',
+          headers: {token: this.token}
+          ,skin: 'line',
+          path:false
+          ,cols: [[
+            {type:'space', width:100, align:'center', templet: '#spaceTpl', width:90}
+            ,{field:'receiver', title:'收货人', align:'center', width:90}
+            ,{field:'address', title:'地址', align:'center'}
+            ,{field:'mobile', title:'联系方式', align:'center', width:140}
+            ,{title:'操作', align:'center', templet: '#addressTpl', width:120}
+          ]]
+        });
+
+        //地址管理——监听工具条
+        table.on('tool(user-address)', (obj)=>{
+          var data = obj.data;
+          console.log(obj);
+          if(obj.event === 'del'){
+            layer.confirm('真的删除行么', (index)=>{
+              console.log(obj.data.id);
+              axios.get(`address/delete/${obj.data.id}`).then(response=>
+              layar.msg(response.msg)
+              ) .catch(error => console.log(error));
+              obj.del();
+              layer.close(index);
+            });
+          }else if(obj.event === 'edit'){
+            layer.open({
+              type: 2
+              ,title: '编辑地址'
+              ,content: 'iframe.html'
+              ,area: ['850px', '440px']
+              ,shade: 0.8
+              ,skin: 'address-class'
+              ,btn: '确定'
+              ,success: function(layero, index){
+                console.log(layero, index);
+                const receiver=window['layui-layer-iframe'+ index].$('#receiver').val(obj.data.receiver);
+                const mobile=window['layui-layer-iframe'+ index].$('#mobile').val(obj.data.mobile);
+                //const detail=window['layui-layer-iframe'+ index].$('#detail').val(obj.data.detail);
+              }
+              ,yes: (index, layero)=>{
+                console.log(index,layero);
+
+                window['layui-layer-iframe'+ index].layui.form.on('submit(useradd-submit)', (data)=>{
+                  const receiver=window['layui-layer-iframe'+ index].$('#receiver').val();
+                  const mobile=window['layui-layer-iframe'+ index].$('#mobile').val();
+                  let address=window['layui-layer-iframe'+ index].$('#address').val();
+                  const detail=window['layui-layer-iframe'+ index].$('#detail').val();
+                  const defa =window['layui-layer-iframe'+ index].$('#defa').prop('checked');
+                  address+=detail;
+                  let is_default=0;
+                  if(defa){
+                    is_default=0;
+                  }else{
+                    is_default=1;
+                  }
+                axios.post('address/update',Qs.stringify({
+                  id:obj.data.id,
+                  receiver:receiver,
+                  mobile:mobile,
+                  address:address,
+                  isDefault:is_default
+                })).then(response => {
+                  layer.msg(response.data.msg);
+                  console.log(response);
+                });
+
+
+                  layer.close(index);
+                });
+                layero.find('iframe').contents().find("#useradd-submit").trigger('click');
+              }
+            });
+          }
+        });
+
+      });
+
+    },methods:{
+      add: ()=> {
+        layer.open({
+          type: 2
+          ,title: '新建地址'
+          ,content: ['iframe.html','no']
+          ,area: ['850px', '440px']
+          ,shade: 0.8
+          ,skin: 'address-class'
+          ,btn: '确定'
+          ,yes: (index, layero)=>{
+            window['layui-layer-iframe'+ index].layui.form.on('submit(useradd-submit)', (data)=>{
+              //console.log(data,index,window['layui-layer-iframe'+ index],layero);
+              const receiver=window['layui-layer-iframe'+ index].$('#receiver').val();
+              const mobile=window['layui-layer-iframe'+ index].$('#mobile').val();
+              let address=window['layui-layer-iframe'+ index].$('#address').val();
+              const detail=window['layui-layer-iframe'+ index].$('#detail').val();
+              const defa =window['layui-layer-iframe'+ index].$('#defa').prop('checked');
+              address+=detail;
+              let is_default=0;
+              if(defa){
+                is_default=0;
+              }else{
+                is_default=1;
+              }
+              console.log(address,receiver,mobile,defa);
+              axios.post(`address/add`, Qs.stringify({
+                'receiver':receiver,
+                'mobile':mobile,
+                'address':address,
+                'isDefault':is_default
+              })).then(response=>{
+                layer.msg(response.data.msg);
+                layer.close(index);
+              }).catch(err=>{
+                //layer.msg(err);
+              });
+            });
+            layero.find('iframe').contents().find("#useradd-submit").trigger('click');
+          }
+        });
+      }
+    }
+  })
+</script>
+
+</body>
+</html>

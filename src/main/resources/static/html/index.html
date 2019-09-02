@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>家居商城-首页</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" href="/plugin/layui/css/layui.css">
+  <link rel="stylesheet" href="/common/css/index.css">
+</head>
+<body>
+<!--jquery-->
+<script src="/plugin/jquery/jquery.js"></script>
+<!--页面顶部-->
+<div class="house-header">
+  <script>
+    $(function(){$('.house-header').load('./header.html');});
+  </script>
+</div>
+
+<div class="layui-fulid">
+  <div class="layui-carousel house-carousel" id="house-carousel">
+    <div carousel-item>
+      <div><img src="/common/img/banner.jpg"></div>
+      <div><img src="/common/img/banner.jpg"></div>
+    </div>
+  </div>
+</div>
+
+<div class="layui-container">
+  <div class="hot-cate">
+    <p class="house-title">热门分类</p>
+    <div class="layui-row">
+      <div class="layui-col-xs4 cateFir cate">
+
+        <a href="list.html">
+          <img src="/common/img/home_img1.png">
+          <div>
+            <p>家居用品</p>
+            <span>18元起</span>
+          </div>
+        </a>
+      </div>
+      <div class="layui-col-xs4 cateSec cate">
+        <a href="list.html">
+          <img src="/common/img/home_img2.png">
+          <div>
+            <p>小家电</p>
+            <span>59元起</span>
+          </div>
+        </a>  
+      </div>
+      <div class="layui-col-xs4 cateThir cate">
+        <a href="list.html">
+          <img src="/common/img/home_img3.png">
+          <div>
+            <p>洗护用品</p>
+            <span>18元起</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+    <div id="hotnew">
+        <!--热销推荐-->
+        <div class="hot-sell">
+            <p class="house-title">热销推荐<a href="">更多优品  &gt;</a></p>
+            <div class="layui-row layui-col-space20">
+
+                <a href="javascript:void(0)" @click="detail(v.id)" class="layui-col-xs3 text" v-for="v in hot">
+                    <div><img :src="v.img"></div>
+                    <p>{{v.name}}</p>
+                    <p class="price">￥{{v.price}}</p>
+                </a>
+
+            </div>
+        </div>
+        <!--新品推荐-->
+        <div class="hot-sell">
+            <p class="house-title">新品推荐<a href="">更多优品  &gt;</a></p>
+            <div class="layui-row layui-col-space20">
+
+                <a href="javascript:void(0)" @click="detail(v.id)" class="layui-col-xs3 text" v-for="v in news">
+                    <div><img :src="v.img"></div>
+                    <p>{{v.name}}</p>
+                    <p class="price">￥{{v.price}}</p>
+                </a>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="layui-fulid" id="goodsAll"></div>
+
+<div class="layui-container" id="favor">
+  <div class="hot-sell">
+    <p class="house-title">猜您喜欢<a href="">更多新品  &gt;</a></p>
+    <div class="layui-row layui-col-space20">
+
+      <a href="javascript:void(0)" @click="detail(v.id)" class="layui-col-xs3 text" v-for="v in favor">
+        <div><img :src="v.img"></div>
+        <p>{{v.name}}</p>
+        <p class="price">￥{{v.price}}</p>
+      </a>
+
+
+    </div>
+  </div>
+</div>
+
+<div class="layui-fulid" id="champ">
+  <div class="layui-row">
+    <a href="list.html" class="layui-col-xs3">
+      <img src="/common/img/home_img16.jpg">
+    </a>
+    <a href="list.html" class="layui-col-xs6">
+      <img src="/common/img/home_img17.jpg">
+    </a>
+    <a href="list.html" class="layui-col-xs3">
+      <img src="/common/img/home_img20.jpg">
+    </a>
+    <a href="list.html" class="layui-col-xs3">
+      <img src="/common/img/home_img18.jpg">
+    </a>
+    <a href="list.html" class="layui-col-xs3">
+      <img src="/common/img/home_img19.jpg">
+    </a>
+    <a href="list.html" class="layui-col-xs3">
+      <img src="/common/img/home_img21.jpg">
+    </a>
+  </div> 
+</div>
+
+
+<!--页面底部-->
+<div class="house-footer">
+  <script>
+    $(function(){$('.house-footer').load('./footer.html');});
+  </script>
+</div>
+
+
+
+<!--vue-->
+<script src="/plugin/vue/vue.js"></script>
+<!--vue-cookies-->
+<script src="/plugin/vue-cookies/vue-cookies.js"></script>
+<!--axios-->
+<script src="/plugin/axios/axios.js"></script>
+<!--layui-->
+<script src="/plugin/layui/layui.js"></script>
+
+<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+<!--[if lt IE 9]>
+  <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+  <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+<script>
+  layui.config({
+    base: '/common/js/' 
+  }).use('house'); 
+</script>
+<script>
+  new Vue({
+    'el':'#favor ',
+    data(){
+      return{
+        favor:[]
+      }
+    },mounted(){
+          // axios.defaults.baseURL ='http://mall.jynb.xyz:9000/api/';
+          // axios.defaults.baseURL ='http://mall.lqcnb.cn:9000/api/';
+          // axios.defaults.baseURL ='http://localhost:8080/api/';
+          axios.defaults.baseURL ='http://mall.lqcnb.cn/api/';
+      axios.get(`goods/getRandList`).then(
+              response => {
+                this.favor=response.data.data;
+              }
+      );
+
+    },methods:{
+      detail:function (id) {
+        window.location.href="detail.html?id="+id
+      }
+    }
+  });
+    new Vue({
+        'el':'#hotnew',
+        data:{
+            news:[],
+            hot:[]
+        },mounted() {
+            axios.get(`goods/getNew`).then(
+                response => {
+                    this.news=response.data.data;
+                }
+            );
+            axios.get(`goods/getHot`).then(
+                response => {
+                    this.hot=response.data.data;
+                }
+            );
+        },methods:{
+            detail:function (id) {
+                window.location.href="detail.html?id="+id
+            }
+        }
+    })
+</script>
+
+</body>
+</html>

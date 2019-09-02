@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>家居商城-购物车</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <!--    <link rel="stylesheet" type="text/css" href="/common/css/main.css">-->
+    <link rel="stylesheet" href="/plugin/layui/css/layui.css">
+    <link rel="stylesheet" href="/common/css/index.css">
+</head>
+<body>
+
+<!--jquery-->
+<script src="/plugin/jquery/jquery.js"></script>
+<!--页面顶部-->
+<div class="house-header">
+    <script>
+        $(function(){$('.house-header').load('./header.html');});
+    </script>
+</div>
+
+<div class="layui-container house-usershop content content-nav-base shopcart-content" id="cart">
+    <div class="cart w1200">
+        <div class="cart-table-th">
+            <div class="th th-chk">
+                <div class="select-all">
+                    <div class="cart-checkbox">
+                        <input class="check-all check" id="allCheckked" type="checkbox" value="true" disabled="disabled">
+                    </div>
+                    <label>&nbsp;&nbsp;全选</label>
+                </div>
+            </div>
+            <div class="th th-item">
+                <div class="th-inner">
+                    商品
+                </div>
+            </div>
+            <div class="th th-price">
+                <div class="th-inner">
+                    单价
+                </div>
+            </div>
+            <div class="th th-amount">
+                <div class="th-inner">
+                    数量
+                </div>
+            </div>
+            <div class="th th-sum">
+                <div class="th-inner">
+                    小计
+                </div>
+            </div>
+        </div>
+        <div class="OrderList">
+            <div class="order-content" id="list-cont">
+                <div class="house-usershop-table-none" v-show="cardList.length===0">
+                    <div><img src="/common/img/shopnone.png"></div>
+                    <p>订单空空如也 快去添加商品到购物车</p><a class="layui-btn layui-btn-primary" href="list.html">去逛逛</a>
+                </div>
+                <ul class="item-content layui-clear" v-for="(v,i) in cardList">
+                    <li class="th th-chk">
+                        <div class="select-all">
+                            <div class="cart-checkbox">
+                                <input class="CheckBoxShop check getStatic" :cid="i" type="checkbox" num="all" name="select-all" value="true" disabled="disabled">
+                            </div>
+                        </div>
+                    </li>
+                    <li class="th th-item">
+                        <div class="item-cont">
+                            <a href="javascript:;"><img :src="v.avatar" alt=""></a>
+                            <div class="text">
+                                <div class="title">{{v.name}}</div>
+                                <p><span>粉色</span>  <span>130</span>cm</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="th th-price">
+                        <span class="th-su">{{v.price}}</span>
+                    </li>
+                    <li class="th th-amount">
+                        <div class="box-btn layui-clear">
+                            <div class="less layui-btn">-</div>
+                            <input class="Quantity-input" type="" name="" v-model="v.number" disabled="disabled">
+                            <div class="add layui-btn">+</div>
+                        </div>
+                    </li>
+                    <li class="th th-sum">
+                        <span class="sum">{{v.price * v.number | priceFormat}}</span>
+                    </li>
+
+                </ul>
+                <select id="addr" @change="getAddress($event)" style="margin-left: 68%">
+                    <option :value="v.id" v-for="v in address" >{{v.address}} {{v.receiver}} {{v.mobile}}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="FloatBarHolder layui-clear">
+            <div class="th th-chk">
+                <div class="select-all">
+                    <div class="cart-checkbox">
+                        <input class="check-all check" id="" name="select-all" type="checkbox"  value="true" disabled="disabled">
+                    </div>
+                    <label>&nbsp;&nbsp;已选<span class="Selected-pieces">0</span>件</label>
+                </div>
+            </div>
+            <div class="th batch-deletion">
+<!--                <span class="batch-dele-btn" @click="batRemove()">批量删除</span>-->
+            </div>
+            <div class="th Settlement">
+                <button class="layui-btn" @click="pay()">结算</button>
+            </div>
+            <div class="th total">
+                <p>应付：<span class="pieces-total" id="total">0</span></p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<!--页面底部-->
+<div class="house-footer">
+    <script>
+        $(function(){$('.house-footer').load('./footer.html');});
+    </script>
+</div>
+
+
+
+
+<!--vue-->
+<script src="/plugin/vue/vue.js"></script>
+<!--vue-cookies-->
+<script src="/plugin/vue-cookies/vue-cookies.js"></script>
+<!--axios-->
+<script src="/plugin/axios/axios.js"></script>
+<!--qs -->
+<script src="/plugin/qs/qs.js"></script>
+<!--layui-->
+<script src="/plugin/layui/layui.js"></script>
+<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+<!--[if lt IE 9]>
+<script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+<script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+<script>
+    //全局配置
+    // axios.defaults.baseURL ='http://mall.jynb.xyz:9000/api/';
+    // axios.defaults.baseURL ='http://mall.lqcnb.cn:9000/api/';
+    //    axios.defaults.baseURL ='http://localhost:8080/api/';
+    axios.defaults.baseURL ='http://mall.lqcnb.cn/api/';
+    // axios.defaults.timeout =6000;
+
+    layui.config({
+        base: '/common/js/' //你存放新模块的目录，注意，不是layui的模块目录
+    }).use(['car','house'],function(){
+        var $ = layui.$,car = layui.car;
+        car.init()
+    });
+    new Vue({
+        el:'#cart',
+        data(){
+            return{
+                cardList:[],
+                token:'',
+                state:true,
+                address:[],
+                toPay:false,
+                curClose:''
+            }
+        },
+        mounted(){
+            //获取令牌
+            this.token=this.$cookies.get("token");
+            axios.interceptors.request.use(config => {
+                    config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+                    if (this.token) {
+                        config.headers.common['token'] =this.token;
+                    }
+                    return config
+                },
+                err => {return Promise.reject(err)}
+            );
+
+
+            //获取地址
+            if(this.token){
+                axios.get(`address/getById`).then(response =>{
+                    this.address=response.data.data;
+                    if(this.address.length===0){
+                        layer.msg("先去添加地址");
+                        window.location="useradd.html"
+                    }
+
+                })
+            }
+            //购物车数据
+            this.cardList=JSON.parse(this.$cookies.get("cards"));
+
+
+            this.curClose =()=>{
+                window.opener=null;
+                window.close();
+            }
+
+        },
+        methods:{
+            //检查库存
+            cheStock:function(){
+                for(let i=0;i< this.cardList.length;i++){
+                    axios.get(`goods/getById/${this.cardList[i].goodsId}`)
+                        .then(response=>{
+                            console.log(this.cardList[i].number,response.data.stock);
+                            this.state=this.cardList[i].number<response.data.stock?true:false;
+                            //console.log( this.state);
+                            if(!this.state){
+                                this.cardList[i].number=response.data.stock;
+                                this.$cookies.set("cards",JSON.stringify(this.cardList),60 * 60 * 24 * 7);
+                                layer.msg("库存不足 请联系管理员");
+                                window.location="cart.html"
+                            }
+                        });
+                }
+
+
+            },
+            //支付
+            pay:function(){
+                if(this.token) {
+                    const total = $('#total').html().substr(1);
+                    const addr = $('#addr').val();
+                    //检查库存
+                    this.cheStock();
+                    console.log(total, addr);
+
+                    //所有商品有库存
+                    if (this.state) {
+                        axios.post(`order/add`,Qs.stringify({
+                                total_amount: total,
+                                addressId: addr
+                            })).then(response => {
+                            layer.msg("跳转支付宝支付");
+                            console.log(response);
+                            const out_trade_no=response.data.data;
+                            console.log(out_trade_no);
+                            axios.get(`pay/goPay`,{
+                                params:{
+                                    total_amount:total,
+                                    out_trade_no:out_trade_no,
+                                    subject:"买卖"
+                                }
+
+                            }).then(res => {
+                                //this.curClose();
+                                //删除cookie
+                                this.$cookies.set("cards",[])
+
+                                const newTab = window.open();
+                                const div = document.createElement('div');
+                                console.log(res.data);
+                                div.innerHTML = res.data; // html code
+                                newTab.document.body.appendChild(div);
+                                newTab.document.forms[0].submit();
+                        }).catch(err => console.log(err))
+                     })
+                    } else {
+                        layer.msg("请先登录");
+                        window.location = "login.html";
+                    }
+
+                }
+            },
+            //支付
+            getAddress:function (e) {
+                console.log(e.target.value) // 选择项的value
+            }
+
+        },
+        watch:{
+            cardList:(val,old)=>console.log(val,old),
+            token:(val,old)=>console.log(val,old),
+            address:(val,old)=>console.log(val,old)
+        },
+        filters:{
+            priceFormat(value) {
+                var toFixedNum = value.toFixed(2);
+                return toFixedNum;
+            }
+        }
+    })
+</script>
+<script>
+
+</script>
+</body>
+</html>

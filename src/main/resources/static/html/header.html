@@ -1,0 +1,94 @@
+<div class="layui-container" id="header">
+    <div class="house-nav">
+      <span class="layui-breadcrumb" lay-separator="|">
+        <a href="login.html" >{{state}}</a>
+        <a href="javascript:void(0)" @click="logout()" v-if="show">退出</a>
+        <a href="javascript:void(0)" @click="toOrder()">我的订单</a>
+        <a href="javascript:void(0)" @click="toMe()">在线客服</a>
+      </span>
+        <span class="layui-breadcrumb house-breadcrumb-icon" lay-separator=" ">
+        <a id="search"><i class="layui-icon layui-icon-house-find"></i></a>
+        <a href="login.html"><i class="layui-icon layui-icon-username"></i></a>
+        <a href="usershop.html"><i class="layui-icon layui-icon-house-shop"></i></a>
+      </span>
+    </div>
+    <div class="house-banner layui-form">
+        <a class="banner" href="index.html">
+            <img src="/common/img/banner.png" alt="家居商城">
+        </a>
+        <div class="layui-input-inline">
+            <input type="text" placeholder="搜索好物" class="layui-input"><i class="layui-icon layui-icon-house-find"></i>
+        </div>
+        <a class="shop" href="cart.html"><i class="layui-icon layui-icon-house-shop"></i><span class="layui-badge">{{cartLength}}</span></a>
+    </div>
+    <ul class="layui-nav close">
+        <li class="layui-nav-item layui-this"><a href="index.html">首页</a></li>
+        <li class="layui-nav-item"><a href="list.html">居家用品</a></li>
+        <li class="layui-nav-item"><a href="list.html">小家电</a></li>
+        <li class="layui-nav-item"><a href="list.html">洗护</a></li>
+        <li class="layui-nav-item"><a href="list.html">厨具</a></li>
+        <li class="layui-nav-item"><a href="list.html">日用品</a></li>
+    </ul>
+    <button id="switch">
+        <span></span><span class="second"></span><span class="third"></span>
+    </button>
+</div>
+<script>
+   const header=new Vue({
+        el:'#header',
+        data(){
+            return{
+                state:'登录',
+                show:false,
+                cartLength:0,
+                token:''
+            }
+        },mounted() {
+             this.token =this.$cookies.get("token");
+             console.log("header",this.token);
+            if(this.token){
+                this.state='已登录';
+                this.show=true;
+                $.ajax({
+                    type: 'get',
+                    timeout: 10000, // 超时时间 10 秒
+                    headers: {
+                        token: this.token
+                    },
+                    url: "http://mall.lqcnb.cn/api/cart/getCount",
+                    dataType: "json",
+                    success: function (data) {
+                        console.log(data);
+                        this.cardList=data.data;
+                    }
+                })
+            }else{
+                this.state='登录';
+                this.show=false;
+                const cards= this.$cookies.get("cards");
+                if(cards){
+                    const cartJson=JSON.parse(cards);
+                    this.cardList=cartJson.length;
+                }
+
+            }
+
+
+        },methods:{
+            logout:function () {
+                this.$cookies.remove("token");
+                layer.msg("用户已退出");
+            },
+            toOrder:function () {
+
+                if(this.token){
+                    window.location.href="user.html"
+                }else{
+                    layer.msg("请先登录");
+                }
+            },toMe:function () {
+                layer.msg("联系我：1402548358@qq.com")
+            }
+        }
+    })
+</script>

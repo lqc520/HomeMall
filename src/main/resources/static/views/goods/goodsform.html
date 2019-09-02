@@ -1,0 +1,159 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>layuiAdmin 商品 iframe 框</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
+</head>
+<body>
+
+  <div class="layui-form"  lay-filter="layuiadmin-form-goods" id="layuiadmin-form-goods" style="padding: 20px 0 0 0;">
+    <div class="layui-form-item">
+      <label class="layui-form-label">商品名</label>
+      <div class="layui-input-inline">
+        <input type="text" name="name" id="name" lay-verify="required" placeholder="请输入商品名" autocomplete="off" class="layui-input">
+        <input type="hidden" name="id" id="id" >
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">价格</label>
+      <div class="layui-input-inline">
+        <input type="text" name="price" id="price" lay-verify="required" placeholder="请输入价格" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">库存</label>
+      <div class="layui-input-inline">
+        <input type="text" name="stock"  id="stock" lay-verify="required" placeholder="请输入库存" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">图片</label>
+      <div class="layui-input-inline">
+        <input type="text" name="file" id="file" lay-verify="required" placeholder="请上传图片" autocomplete="off" class="layui-input" >
+        <input type="hidden" name="img"  id="filename" >
+      </div>
+      <button style="float: left;" type="button" class="layui-btn" id="layuiadmin-upload-goods">上传图片</button>
+    </div>
+
+    <div class="layui-form-item">
+      <label class="layui-form-label">栏目</label>
+      <div class="layui-input-block" >
+        <select name="categoryId" id="categoryId">
+          <option  value="0" >首页</option>
+          <option  value="1">家居用品</option>
+          <option  value="2">小家电</option>
+          <option  value="4">洗护</option>
+          <option  value="5">厨具</option>
+          <option  value="6">日用品</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="layui-form-item">
+      <label class="layui-form-label">类别</label>
+      <div class="layui-input-block">
+        <select name="sortId" id="sortId">
+          <option  value="1">床品</option>
+          <option  value="2">灯具</option>
+          <option  value="3">布艺</option>
+          <option  value="4">收纳</option>
+          <option  value="5">小家具</option>
+          <option  value="6">电磁炉</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="layui-form-item">
+      <label class="layui-form-label">季节</label>
+      <div class="layui-input-block">
+        <select name="seasonId" id="seasonId">
+          <option value="1">春</option>
+          <option value="2">夏</option>
+          <option value="3">秋</option>
+          <option value="4">冬</option>
+        </select>
+      </div>
+    </div>
+
+
+    <div class="layui-form-item layui-hide">
+      <input type="button" lay-submit lay-filter="LAY-goods-front-submit" id="LAY-goods-front-submit" value="确认">
+    </div>
+  </div>
+  <script src="/plugin/vue/vue.js"></script>
+  <script src="/plugin/jquery/jquery.js"></script>
+  <script src="../../../layuiadmin/layui/layui.js"></script>  
+  <script>
+    layui.config({
+      base: '../../../layuiadmin/' //静态资源所在路径
+    }).extend({
+      index: 'lib/index' //主入口模块
+    }).use(['index', 'form', 'upload'], function(){
+      var $ = layui.$
+              ,form = layui.form
+              ,upload = layui.upload ;
+
+      upload.render({
+        elem: '#layuiadmin-upload-goods'
+        ,url: 'http://mall.lqcnb.cn/api/goods/upload'
+        ,accept: 'images'
+        ,method: 'post'
+        ,acceptMime: 'image/*'
+        ,done: function(res){
+          $('filename').val(res.data);
+          $(this.item).prev("div").children("input").val(res.data)
+        }
+      });
+    });
+    function getQueryVariable(variable)
+    {
+      const query = window.location.search.substring(1);
+      const vars = query.split("&");
+      for (let i=0;i<vars.length;i++) {
+        let pair = vars[i].split("=");
+        if(pair[0] == variable){return pair[1];}
+      }
+      return(false);
+    }
+    const name=decodeURI(getQueryVariable("name"));
+    const price=getQueryVariable("price");
+    const id=getQueryVariable("id");
+    const file=getQueryVariable("file");
+    const stock=getQueryVariable("stock");
+    const seasonId=getQueryVariable("seasonId");
+    const categoryId=getQueryVariable("categoryId");
+    const sortId=getQueryVariable("sortId");
+    if(name&&price&&id&&file&&stock&&seasonId&&categoryId&&sortId){
+      $('#name').val(decodeURI(getQueryVariable("name")));
+      $('#price').val(getQueryVariable("price"));
+      $('#id').val(getQueryVariable("id"));
+      $('#file').val(getQueryVariable("file"));
+      $('#filename').val(getQueryVariable("file"));
+      $('#stock').val(getQueryVariable("stock"));
+      $('#seasonId').val(parseInt(getQueryVariable("seasonId")) );
+      $('#categoryId').val(parseInt(getQueryVariable("categoryId")));
+      $('#sortId').val(parseInt(getQueryVariable("sortId")));
+    }
+
+
+    // $.get('http://localhost:8080/api/category/list',function (data) {
+    //   console.log(data);
+    //   this.category=data;
+    // });
+    // $.get('http://localhost:8080/api/sort/list',function (data) {
+    //   console.log(data);
+    //   this.sort=data;
+    // });
+
+
+
+
+  </script>
+</body>
+</html>

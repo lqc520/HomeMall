@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>家居商城-列表</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" href="/plugin/layui/css/layui.css">
+  <link rel="stylesheet" href="/common/css/index.css">
+</head>
+<body>
+
+<!--jquery-->
+<script src="/plugin/jquery/jquery.js"></script>
+<!--页面顶部-->
+<div class="house-header">
+  <script>
+    $(function(){$('.house-header').load('./header.html');});
+  </script>
+</div>
+
+<div class="layui-container house-list" id="main">
+  <p class="classify"><a href="index.html">首页</a> &gt; <span>家居用品</span></p>
+  <div class="list-banner"></div>
+  <div class="filter">
+    <div><span>分类：</span>
+      <ul>
+        <li class="active" @click="sortClick('-1')">全部</li>
+        <li v-for="(v,i) in sort" @click="sortClick(v.id)">{{v.name}}</li>
+      </ul>
+    </div>
+    <div><span>季节：</span>
+      <ul>
+        <li v-for="(v,i) in season" :class="v.active" @click="seasonClick(v.id)">{{v.name}}</li>
+      </ul>
+    </div>
+    <div><span>排序：</span>
+      <ul>
+        <li @click="reOrderClick('-1')" class="active">默认</li>
+        <li @click="reOrderClick('1')">价格<i class="layui-icon layui-icon-house-up"></i><i class="layui-icon layui-icon-triangle-d"></i></li>
+        <li @click="reOrderClick('2')">上架时间<i class="layui-icon layui-icon-house-up"></i><i class="layui-icon layui-icon-triangle-d"></i></li>
+      </ul>
+    </div>
+  </div>
+<!--  商品部分 -->
+  <div class="layui-row layui-col-space25" >
+   
+    <div class="layui-col-xs6 layui-col-sm3" v-for="(v,i) in items">
+      <div class="list-detail">
+        <a href="javascript:void(0)" @click="toDetail(v.id)">
+            <div class="img"><img :src="v.img"></div>
+            <p class="title" >{{v.name}}</p>
+            <p><span class="price">￥{{v.price}}</span><span>1266</span>人付款</p>
+        </a>
+      </div>
+    </div>
+
+  </div>
+  <div id="houseList"></div>
+</div>
+
+
+<!--页面底部-->
+<div class="house-footer">
+  <script>
+    $(function(){$('.house-footer').load('./footer.html');});
+  </script>
+</div>
+
+<!--vue-->
+<script src="/plugin/vue/vue.js"></script>
+<!--vue-cookies-->
+<script src="/plugin/vue-cookies/vue-cookies.js"></script>
+<!--axios-->
+<script src="/plugin/axios/axios.js"></script>
+<!--layui-->
+<script src="/plugin/layui/layui.js"></script>
+<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+<!--[if lt IE 9]>
+  <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+  <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+<script>
+  layui.config({
+    base: '/common/js/'
+  }).use('house'); 
+</script>
+
+
+<script>
+
+  // axios全局配置
+  // axios.defaults.baseURL ='http://mall.jynb.xyz:9000/api/';
+  // axios.defaults.baseURL ='http://mall.lqcnb.cn:9000/api/';
+  //    axios.defaults.baseURL ='http://localhost:8080/api/';
+  axios.defaults.baseURL ='http://mall.lqcnb.cn/api/';
+  let timeFlag=true;
+  let priceFlag=true;
+  const main=new Vue({
+    el:'#main',
+    data () {
+      return {
+        items: [],
+        pageSize: 8,//分页大小
+        pageNum:1,//当前页
+        season:[{id:-1,name:"全部",active:"active"},{id:1,name:"春"},{id:2,name:"夏"},{id:3,name:"秋"},{id:3,name:"冬天"}],
+        sort:[],//二级分类
+        seasonId:-1, //季节id
+        categoryId:-1,//大分类id
+        sortId:-1,//二级分类id
+        orderType:null,//排序类型 time price
+        byOrder:null,//排序类型 asc desc
+        getPageList:"" //异步请求数据
+      }
+    },
+    mounted(){
+      axios.get("sort/list")
+              .then(response => (this.sort = response.data));//获取二级分类 后期移动到header.html
+
+      this.getPageList=()=>{
+        axios.get(`goods/getPageList/${this.pageNum}/${this.pageSize}/${this.categoryId}/${this.sortId}/${this.seasonId}/${this.orderType}/${this.byOrder}`)
+              .then(response => {
+                this.items = response.data.list;
+                f=true;
+                //列表页——分页
+                layui.use('laypage', ()=> {
+                  const laypage = layui.laypage;
+                  laypage.render({
+                    elem: 'houseList'
+                    , count: response.data.total
+                    , theme: '#daba91'
+                    , layout: ['page', 'next']
+                    ,limit:response.data.pageSize,
+                    jump: (obj, first)=>{
+                      //obj包含了当前分页的所有参数
+                      //首次不执行
+                      if(!first){
+                        axios.get(`goods/getPageList/${obj.curr}/${obj.limit}/${this.categoryId}/${this.sortId}/${this.seasonId}/${this.orderType}/${this.byOrder}`)
+                                .then(response => (this.items = response.data.list))
+                                .catch(error => console.log(error))
+                      }
+                    }
+                  }); //laypage.render
+                });// layui.use
+              })
+              .catch(error => console.log(error))};//axios.get
+      this.getPageList();
+    },methods:{
+      sortClick: function (obj) {
+        this.sortId=obj;
+        this.getPageList();
+      },
+      seasonClick: function (obj) {
+        this.seasonId=obj;
+        this.getPageList();
+      },
+      reOrderClick:function (obj) {
+        console.log(obj);
+        if(obj==1){
+          this.orderType="byPrice";
+          priceFlag=!priceFlag;
+          if(priceFlag){
+            this.byOrder="ASC";
+          }else {
+            this.byOrder="DESC";
+          }
+        }else if(obj==2){
+          this.orderType="byTime";
+          timeFlag=!timeFlag;
+          if(timeFlag){
+            this.byOrder="ASC";
+          }else {
+            this.byOrder="DESC";
+          }
+        }else {
+          this.orderType=null;
+        }
+        console.log(this.orderType);
+        this.getPageList();
+      },
+      toDetail:function (id) {
+        window.location="detail.html?id="+id;
+      }
+    }, watch:{
+      sortId:newVal => console.log(newVal),
+      byPrice:newVal => console.log(newVal),
+      byTime:newVal => console.log(newVal)
+    }
+  });
+
+  //setTimeout(()=>console.log(main.items),"1000");
+
+  // const filter = new Vue({
+  //   el:'.filter',
+  //   data:{
+  //       season:[{id:0,name:"全部",active:"active"},{id:1,name:"春"},{id:2,name:"夏"},{id:3,name:"秋"},{id:3,name:"冬天"}],
+  //       sort:[],
+  //       byTime:'',
+  //       byPrice:'',
+  //       seasonId:0,
+  //       categoryId:1,
+  //       sortId:0
+  //   },methods:{
+  //     sortClick: function (obj) {
+  //       this.sortId=obj.id;
+  //       axios.get(`/getPageList/${this.pageNum}/{pageSize}/{categoryId}/{sortId}/{seasonId}/{orderType}/{byOrder}`)
+  //     },
+  //     seasonClick: function (obj) {
+  //       this.seasionId=obj.id
+  //     },
+  //     priceClick: function () {
+  //       flag=!flag;
+  //       if(flag){
+  //         this.byPrice="ASC";
+  //       }else {
+  //         this.byPrice="DESC";
+  //       }
+  //     },
+  //     timeClick: function () {
+  //         this.byTime = "ASC";
+  //     }
+  //   },mounted() {
+  //     axios.get("http://localhost:8080/api/sort/list")
+  //             .then(response => (this.sort = response.data))
+  //   }, watch:{
+  //       sort:newVal => console.log(newVal),
+  //       byPrice:newVal => console.log(newVal),
+  //       byTime:newVal => console.log(newVal)
+  //     }
+  // });
+
+
+
+
+
+</script>
+</body>
+</html>

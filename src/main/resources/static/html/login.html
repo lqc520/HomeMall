@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>家居商城-登录</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" href="/plugin/layui/css/layui.css">
+  <link rel="stylesheet" href="/common/css/index.css">
+</head>
+<body>
+
+<!--jquery-->
+<script src="/plugin/jquery/jquery.js"></script>
+<!--页面顶部-->
+<div class="house-header">
+  <script>
+    $(function(){$('.house-header').load('./header.html');});
+  </script>
+</div>
+
+<div class="layui-fulid" id="house-login" >
+  <div class="layui-form">
+    <p>手机号登录</p>
+    <div class="layui-input-block login">
+      <i class="layui-icon layui-icon-house-mobile"></i>
+      <input type="text" required lay-verify="required" placeholder="请输入手机号" v-model="mobile" @blur="cheMobile()" class="layui-input">
+    </div>
+    <div class="layui-input-block getCode">
+      <input type="text" required lay-verify="required" placeholder="请输入短信验证码" v-model="code" class="layui-input">
+      <button class="layui-btn" @click="getCode()">获取验证码</button>
+    </div>
+    <button class="layui-btn" lay-submit lay-filter="user-login" @click="doSubmit()">登录</button>
+  </div>
+</div>
+
+<!--jquery-->
+<script src="/plugin/jquery/jquery.js"></script>
+<!--页面底部-->
+<div class="house-footer">
+  <script>
+    $(function(){$('.house-footer').load('./footer.html');});
+  </script>
+</div>
+
+<!--vue-->
+<script src="/plugin/vue/vue.js"></script>
+<!--axios-->
+<script src="/plugin/axios/axios.js"></script>
+<!--layui-->
+<script src="/plugin/layui/layui.js"></script>
+<!--qs -->
+<script src="/plugin/qs/qs.js"></script>
+<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+<!--[if lt IE 9]>
+  <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+  <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+<script>
+  layui.config({
+    base: '/common/js/'
+  }).use('house'); 
+</script>
+  <script>
+    // axios.defaults.baseURL ='http://mall.jynb.xyz:9000/api/';
+    // axios.defaults.baseURL ='http://mall.lqcnb.cn:9000/api/';
+    //    axios.defaults.baseURL ='http://localhost:8080/api/';
+    axios.defaults.baseURL ='http://mall.lqcnb.cn/api/';
+    this.check = () => axios.get(`member/checkMobile/${this.mobile}`).then(
+            response => {
+              if(response.data.code===1){
+                layer.msg(response.data.msg);
+                this.isRegister=false;
+              }else{
+                this.isRegister=true;
+              }
+            }
+    )
+    new Vue({
+      el:'#house-login',
+      data(){
+        return{
+          mobile:'',//手机号
+          code:'',//验证码
+          check:'',//检测是否注册
+          isRegister:true,//是否注册
+          doLogin:'',//登入
+          doRegister:'',//注册
+          getLoginCode:'',//获取登录验证码
+          getRegisterCode:''//获取注册验证码
+        }
+      },methods:{
+        getCode:function () {
+          console.log("getCode"+this.isRegister);
+          if(this.mobile.length!=11){
+            layer.msg('手机格式不正确');
+          }else{
+            if(this.isRegister){
+              console.log("发送登录短信",this.isRegister);
+              this.getLoginCode();
+            }else{
+              console.log("发送注册短信",this.isRegister);
+              this.getRegisterCode();
+
+            }
+
+          }
+        },
+        cheMobile:function () {
+          if(this.mobile.length!=11){
+            layer.msg('手机格式不正确');
+          }else{
+            this.check();
+          }
+        },
+        doSubmit:function () {
+          console.log("doSubmit"+this.isRegister);
+          if(this.code.length!=4){
+            layer.msg('验证码格式不正确');
+          }else{
+            if(this.isRegister){
+              this.doLogin();
+            }else{
+              this.doRegister();
+            }
+          }
+        }
+      },mounted() {
+          this.getLoginCode = () => axios.get(`member/getLoginCode/${this.mobile}`).then(
+                  response =>{
+                      layer.msg(response.data.msg);
+                  }
+          ),
+          this.getRegisterCode = () => axios.get(`member/getRegisterCode/${this.mobile}`).then(
+                  response =>{
+                    layer.msg(response.data.msg);
+                  }
+          ),
+          this.doLogin = () => axios.post(`member/login`,
+            Qs.stringify({
+              mobile:this.mobile,
+              code:this.code})
+          ).then(response => {
+            layer.msg(response.data.msg);
+            if (response.data.code === 0) {
+              window.location.href = "index.html";
+            }
+          }),
+          this.doRegister = () => axios.post(`member/register`,Qs.stringify({
+            mobile:this.mobile,code:this.code
+          })).then(response =>{
+            layui.msg(response.data.msg);
+            if(response.data.code===0){
+              window.location.href="index.html"
+            }
+          })
+
+
+      },
+      watch:{
+        isRegister:val =>console.log(val)
+      }
+
+    })
+  </script>
+</body>
+</html>

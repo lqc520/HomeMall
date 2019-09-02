@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.lqcnb.mall.api.mapper.OrderMapper">
+  <resultMap id="BaseResultMap" type="cn.lqcnb.mall.api.entity.Order">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="order_number" jdbcType="VARCHAR" property="orderNumber" />
+    <result column="member_id" jdbcType="INTEGER" property="memberId" />
+    <result column="address_id" jdbcType="INTEGER" property="addressId" />
+    <result column="payment_amount" jdbcType="DECIMAL" property="paymentAmount" />
+    <result column="payment_time" jdbcType="TIMESTAMP" property="paymentTime" />
+    <result column="freight" jdbcType="DECIMAL" property="freight" />
+    <result column="send_time" jdbcType="TIMESTAMP" property="sendTime" />
+    <result column="finish_time" jdbcType="TIMESTAMP" property="finishTime" />
+    <result column="cancel_time" jdbcType="TIMESTAMP" property="cancelTime" />
+    <result column="order_status" jdbcType="INTEGER" property="orderStatus" />
+    <result column="is_delete" jdbcType="INTEGER" property="isDelete" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <select id="getOrder" resultType="map" parameterType="map">
+    SELECT
+        *
+    FROM
+        `mall_order` o,
+        mall_order_item i,
+        mall_payment p
+    <where>
+      AND o.order_number = i.order_number
+      AND o.order_number = p.order_number
+      AND o.member_id = #{memberId}
+      <if test="orderStatus != null and orderStatus != '' and orderStatus != -1">
+            AND o.order_status = #{orderStatus}
+      </if>
+      order  by o.create_time
+    </where>
+
+  </select>
+  <select id="getOrderList" resultType="map" parameterType="cn.lqcnb.mall.api.entity.Order">
+    SELECT
+    *
+    FROM
+    `mall_order` o,
+    mall_order_item i,
+    mall_payment p
+    <where>
+      AND o.order_number = i.order_number
+      AND o.order_number = p.order_number
+      <if test="orderStatus != null and orderStatus != '' and orderStatus != -1">
+        AND o.order_status = #{orderStatus}
+      </if>
+      <if test="orderNumber != null and orderNumber != ''">
+        AND o.order_number = #{orderNumber}
+      </if>
+      order  by o.create_time
+    </where>
+
+  </select>
+</mapper>

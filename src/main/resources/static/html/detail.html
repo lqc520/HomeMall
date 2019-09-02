@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>家居商城-详情</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" href="/plugin/layui/css/layui.css">
+  <link rel="stylesheet" href="/common/css/index.css">
+  <style type="text/css">
+    .house-detail div.price div ul.thumb{width: 18%; margin-left: 2%; display: inline-block; vertical-align: middle;}
+    .house-detail div.price div ul.thumb li{margin-top: 15%;}
+    .house-detail div.price div ul.thumb li:first-child{margin-top: 0;}
+    .house-detail div.price .shopChoose{padding-top: 20px; font-size: 14px;}
+  </style>
+</head>
+<body>
+
+<!--jquery-->
+<script src="/plugin/jquery/jquery.js"></script>
+<!--页面顶部-->
+<div class="house-header">
+  <script>
+    $(function(){$('.house-header').load('./header.html');});
+  </script>
+</div>
+
+<div class="layui-container house-detail" id="main">
+  <p class="title"><a href="index.html">首页</a> &gt; <a href="list.html">家居用品</a> &gt <span>产品详情</span></p>
+  <div class="layui-row price">
+    <div class="layui-col-sm6">
+      <div class="intro-img"><img :src="goods.img"></div>
+      <ul class="thumb">
+                <li v-for="(v,i) in detailImg" ><img :src="v"></li>
+      </ul>
+    </div>
+    <div class="layui-col-sm6 shopChoose">
+      <div class="title"><p><span class="layui-badge">新品</span>{{goods.name}}</p>好评率  <span>90%</span></div>
+      <p><span>￥<big><b>{{goods.price}}</b></big></span>原价￥<big><del>{{goods.price+100}}</del></big></p>
+      <dl>
+        <dt>颜色</dt>
+        <dd>白色</dd>
+        <dd class="active">灰色</dd>
+        <dd>黑色</dd>
+      </dl>
+      <dl>
+        <dt>尺寸</dt>
+        <dd>1.2米</dd>
+        <dd class="active">0.5米</dd>
+      </dl>
+      <div class="number layui-form">
+        <label>数量</label>
+        <div class="layui-input-inline btn-input">
+          <button class="layui-btn layui-btn-primary sup" @click="reduce()">-</button>
+          <input type="text" class="layui-input"  v-model="card.number">
+          <button class="layui-btn layui-btn-primary sub" @click="plus()">+</button>
+        </div>
+        <p class="inputTips">已超出库存数量！</p>
+      </div>
+      <div class="shopBtn">
+        <button class="layui-btn layui-btn-primary sale" @click="pay()">立即购买</button>
+        <button class="layui-btn shop" @click="addCard()"><i class="layui-icon layui-icon-house-shop"></i>加入购物车</button>
+        <button class="layui-btn layui-btn-primary collect"><i class="layui-icon layui-icon-rate" id="collect" @click="collect(goods.id)"></i>收藏</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="layui-row layui-col-space30">
+    <div class="layui-col-sm8 detailTab">
+      <div class="layui-tab layui-tab-brief">
+        <ul class="layui-tab-title">
+          <li class="layui-this">详情</li>
+          <li>评论 <span>(120)</span></li>
+        </ul>
+        <div class="layui-tab-content">
+          <!-- 详情图片列表-->
+          <div class="layui-tab-item layui-show">
+            <img v-for="v in detailImg" :src="v">
+          </div>
+          <div class="layui-tab-item">
+            <div class="comment">
+              <ul>
+                <li>
+                  <div class="img"><img src="/common/img/person.png"></div>
+                  <p class="txt">质量还可以！纯棉的，盖着挺舒服的，对皮肤也好。</p>
+                  <p class="time">2018年05月02日 11:20</p>
+                </li>
+                <li>
+                  <div class="img"><img src="/common/img/person.png"></div>
+                  <p class="txt">质量还可以！纯棉的，盖着挺舒服的，对皮肤也好。</p>
+                  <p class="time">2018年05月02日 11:20</p>
+                </li>
+              </ul>
+              <div id="detailList"></div>
+              </div>
+          </div>
+        </div>
+      </div>  
+    </div>
+<!--    热销推荐-->
+    <div class="layui-col-sm4 detailCom">
+      <p class="title">热销推荐</p>
+      <ul class="detailCom-content hot-sell"> 
+        <li><a class="text">
+          <div><img src="/common/img/goods_img6.jpg"></div>
+          <p>森系小清新四件套</p>
+          <p class="price">￥200</p>
+        </a></li>
+        <li><a class="text">
+          <div><img src="/common/img/goods_img7.jpg"></div>
+          <p>森系小清新四件套</p>
+          <p class="price">￥200</p>
+        </a></li>
+        <li><a class="text">
+          <div><img src="/common/img/goods_img8.jpg"></div>
+          <p>森系小清新四件套</p>
+          <p class="price">￥200</p>
+        </a></li>
+        <li><a class="text">
+          <div><img src="/common/img/goods_img9.jpg"></div>
+          <p>森系小清新四件套</p>
+          <p class="price">￥200</p>
+        </a></li>
+        <li><a class="text">
+          <div><img src="/common/img/goods_img6.jpg"></div>
+          <p>森系小清新四件套</p>
+          <p class="price">￥200</p>
+        </a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!--页面底部-->
+<div class="house-footer">
+  <script>
+    $(function(){$('.house-footer').load('./footer.html');});
+  </script>
+</div>
+
+
+<!--vue-->
+<script src="/plugin/vue/vue.js"></script>
+<!--vue-cookies-->
+<script src="/plugin/vue-cookies/vue-cookies.js"></script>
+<!--jq-cookies-->
+<script src="/plugin/jquery/jquery.js"></script>
+<script src="/plugin/jquery.cookie/jquery.cookie.js"></script>
+<!--axios-->
+<script src="/plugin/axios/axios.js"></script>
+<!--layui-->
+<script src="/plugin/layui/layui.js"></script>
+<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+<!--[if lt IE 9]>
+  <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+  <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+<script>
+  layui.config({
+    base: '/common/js/' 
+  }).use('house');
+  $.cookie("aa","ddfdfffffff");
+</script>
+<script>
+  // axios.defaults.baseURL ='http://mall.jynb.xyz:9000/api/';
+  // axios.defaults.baseURL ='http://mall.lqcnb.cn:9000/api/';
+  // axios.defaults.baseURL ='http://localhost:8080/api/';
+  axios.defaults.baseURL ='http://mall.lqcnb.cn/api/';
+  axios.interceptors.request.use(config => {
+            config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+            if (this.token) {
+              config.headers.common['token'] =this.token
+            }
+            return config
+          },
+          err => {return Promise.reject(err)}
+  );
+  function getQueryVariable(variable)
+  {
+    const query = window.location.search.substring(1);
+    const vars = query.split("&");
+    for (let i=0;i<vars.length;i++) {
+      let pair = vars[i].split("=");
+      if(pair[0] === variable){return pair[1];}
+    }
+    return(false);
+  }
+  console.log(getQueryVariable("id"));
+  new Vue({
+    el:"#main",
+    data() {
+      return {
+        id:getQueryVariable("id"),//获取url id
+        goods:{},//商品
+        detailImg:[],//图片
+        card:{goodsId:'',name:'',color:'',avatar:'',price:'',number:1},//购物车模型
+        cardsInfo:this.$cookies.get("cards"),//本地购物车
+        cards:[]//购物车数据,
+        ,token:this.$cookies.get("token")
+      };
+    },mounted(){
+        axios.get(`goods/getById/${this.id}`).then(
+                response => {
+                  this.goods = response.data;
+                  this.detailImg = response.data.detailImg.split(",");
+                }
+
+        );
+    },methods:{
+      addCard:function () {
+        // if( $.cookie("cards")!=null){
+        if(this.$cookies.isKey("cards")&&this.$cookies.get("cards")!=null){//判断有没有购物车
+          let strCards=this.$cookies.get("cards");
+          // let strCards=$.cookies("cards");
+          let jsonCards=JSON.parse(strCards);
+          this.cards=jsonCards;//更新当前用户购物车列表
+          console.log("jsonCards",jsonCards);
+          let flag=false;//判断新添加的商品有没有在购物车里面
+          for(let i=0;i<jsonCards.length ;i++){
+            if(jsonCards[i].goodsId===this.goods.id){
+              flag=true;//商品有在购物车里面
+              jsonCards[i].number = (jsonCards[i].number+this.card.number)<this.goods.stock? jsonCards[i].number += this.card.number:this.goods.stock;
+              if(jsonCards[i].number>=this.goods.stock){
+                layer.msg("已超出库存数量！");
+              }
+              console.log("jsonCards[i].number"+jsonCards[i].number);
+              break;
+            }
+          }
+          if(!flag){//商品没有在购物车里面 添加新商品
+            this.card.goodsId=this.goods.id;
+            this.card.name=this.goods.name;
+            this.card.avatar=this.goods.img;
+            this.card.price=this.goods.price;
+            this.cards.push(this.card);
+          }
+          // $.cookie("cards",JSON.stringify(jsonCards));
+          this.$cookies.set("cards",JSON.stringify(jsonCards),60 * 60 * 24 * 7);//更新购物车
+          layer.msg("加入购物车成功",{
+            icon: 1,
+            time: 1000 //2秒关闭（如果不配置，默认是3秒）
+          });
+        }else {//第一次添加cookie 第一件商品加入购物车
+          this.card.goodsId=this.goods.id;
+          this.card.name=this.goods.name;
+          this.card.avatar=this.goods.img;
+          this.card.price=this.goods.price;
+          this.cards.push(this.card);
+          // $.cookie("cards",JSON.stringify(this.cards));
+
+          this.$cookies.set("cards",JSON.stringify(this.cards),60 * 60 * 24 * 7);//更新购物车 序列化成字符串
+          layer.msg("加入购物车成功",{
+            icon: 1,
+            time: 1000 //2秒关闭（如果不配置，默认是3秒）
+          });
+        }
+      },
+      plus:function () {
+        // this.number = this.number < this.goods.stock ? this.number+=1:this.goods.stock;
+        this.card.number = this.card.number < this.goods.stock ? this.card.number+=1:this.goods.stock;
+        if(this.card.number>=this.goods.stock){
+          layer.msg("已超出库存数量！");
+        }
+      },
+      reduce:function () {
+        this. card.number=this. card.number>1?this. card.number-=1:1;
+        // this.number=this.number>1?this.number-=1:1;
+      },//支付
+      pay:function () {
+        layer.msg("请加入购物车");
+      },
+      collect:function (id) {
+        console.log(header.token);
+        if(this.token){
+          axios.get(`collection/add/${id}`).then(
+                  response => {
+                    layer.msg(response.data.msg);
+                  }
+
+          );
+        }else{
+          layer.msg("请先登录");
+        }
+
+      }
+    },watch:{
+      goods:val => console.log(val),
+      detailImg:val => console.log(val),
+      cardInfo:val => console.log(val),
+      cards:val =>  console.log(val),
+      'card.number' : val=>console.log(val)
+    }
+  });
+
+</script>
+
+</body>
+</html>

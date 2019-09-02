@@ -1,0 +1,52 @@
+
+body{font-family: "Microsoft YaHei", "SimSun", '\5b8b\4f53', sans-serif;  -moz-user-select:none;
+      -webkit-user-select: none;       
+      -ms-user-select: none;     }
+.w1200{width: 1200px; margin:0 auto;}
+.nobor{border-bottom: 0!important;}
+.margin0{margin: 0!important;}
+.padding0{padding: 0!important;}
+i{font-style: normal;}
+
+
+
+/*shopcart-content*/
+/*.shopcart-content .banner-bg{height: 180px; background: url(../img/buy_banner.jpg) no-repeat; margin:50px auto; padding-left: 68px; box-sizing: border-box; color: #fff}*/
+.shopcart-content .banner-bg h3{font-size: 36px; padding:40px 0 20px 0;}
+.shopcart-content .banner-bg p{font-size: 20px; }
+.shopcart-content .cart{padding-bottom: 10px;}
+.shopcart-content .cart-table-th{height: 50px; line-height: 50px; background:  #f5f5f5;}
+.shopcart-content  .th{float: left; text-align: center;}
+.shopcart-content  .th-chk{width: 70px; position: relative; margin-left: 43px; text-align: left;}
+.shopcart-content  .th-chk .select-all{cursor: pointer;}
+.shopcart-content  .th-chk .select-all label{cursor: pointer;}
+.shopcart-content .cart-checkbox{display: inline-block;}
+.shopcart-content  .CheckBoxShop{width: 16px; height: 16px; border:1px solid #cccccc; position: relative; top: 4px;}
+.shopcart-content .th-item{width: 340px; text-align: left; padding-left: 90px; box-sizing: border-box;}
+
+.shopcart-content .th-price{width: 200px; }
+.shopcart-content .th-amount{width: 200px; }
+.shopcart-content .th-sum{width: 200px;}
+.shopcart-content .th-op{width: 100px;}
+.shopcart-content .item-content{border:1px solid #ececee; border-bottom: 0; height: 218px; padding:59px 0; box-sizing: border-box; position: relative;}
+.shopcart-content .order-content .th-chk{margin-top: 35px; position: relative; z-index: 2;}
+.shopcart-content .order-content .th-item{position: relative; left: -120px; z-index: 1;}
+.shopcart-content .order-content .th-amount div.layui-btn,.shopcart-content .order-content .th-amount input{float: left; border:1px solid #e2e2e2; text-align: center; background: #ffffff; margin-left: -1px; color: #999999;}
+.shopcart-content .order-content .th-amount div.layui-btn{width: 28px; height: 38px; padding:0;}
+.shopcart-content .order-content .th-amount input{width: 46px; height: 36px;}
+.shopcart-content .order-content .th-amount .box-btn{padding-left: 52px;}
+.shopcart-content .order-content .th-sum span{line-height: 24px; color: #ee0000; font-weight: bold; }
+.shopcart-content .order-content .th-op span{display: block; cursor: pointer; line-height: 24px;}
+.shopcart-content .order-content .th-item .item-cont img{float: left; width: 98px; height: 98px;  border:1px solid #ececee; margin-right: 20px;}
+.shopcart-content .order-content .th-item .item-cont .text{text-align: left; line-height: 24px;}
+.shopcart-content .order-content .th-item .item-cont .text .title{color: #333333;}
+.shopcart-content .order-content .th-item .item-cont .text p{color: #888;}
+.shopcart-content .FloatBarHolder{line-height: 78px; border:1px solid #ececee; background: #f5f5f5; position: relative;}
+.shopcart-content .FloatBarHolder .th-chk {width: 150px;}
+.shopcart-content .FloatBarHolder .batch-deletion span{cursor: pointer;}
+.shopcart-content .FloatBarHolder .Settlement,.shopcart-content .FloatBarHolder .total{float: right;}
+.shopcart-content .FloatBarHolder .Settlement button.layui-btn{width: 160px; height: 84px; line-height: 84px; font-size: 24px; color: #fff; text-align: center; background: #ff5500; border-radius: 0; position: absolute; right: 0px; top: -1px;}
+.shopcart-content .FloatBarHolder .total{margin-right: 230px;}
+.shopcart-content .FloatBarHolder .total span{color: #ee0000; font-size: 26px; font-weight: bold; padding-left: 5px;}
+.shopcart-content .FloatBarHolder .th-chk .select-all label{letter-spacing: 4px;}
+/*end-shopcart-content*/

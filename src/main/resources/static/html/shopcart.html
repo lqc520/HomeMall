@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>家居商城-购物车</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" href="/plugin/layui/css/layui.css">
+  <link rel="stylesheet" href="/common/css/index.css">
+</head>
+<body>
+
+<div class="house-header">
+  <div class="layui-container">
+    <div class="house-nav">
+      <span class="layui-breadcrumb" lay-separator="|">
+        <a href="login.html">登录</a>
+        <a href="">我的订单</a>
+        <a href="">在线客服</a>
+      </span>
+      <span class="layui-breadcrumb house-breadcrumb-icon" lay-separator=" ">
+        <a id="search"><i class="layui-icon layui-icon-house-find"></i></a>
+        <a href="login.html"><i class="layui-icon layui-icon-username"></i></a>
+        <a href="usershop.html"><i class="layui-icon layui-icon-house-shop"></i></a>
+      </span>
+    </div>
+    <div class="house-banner layui-form">
+      <a class="banner" href="index.html">
+        <img src="/common/img/banner.png" alt="家居商城">
+      </a>
+      <div class="layui-input-inline">
+        <input type="text" placeholder="搜索好物" class="layui-input"><i class="layui-icon layui-icon-house-find"></i>
+      </div>
+      <a class="shop" href="usershop.html"><i class="layui-icon layui-icon-house-shop"></i><span class="layui-badge">1</span></a>
+    </div>
+    <ul class="layui-nav close">
+      <li class="layui-nav-item layui-this"><a href="index.html">首页</a></li>
+      <li class="layui-nav-item"><a href="list.html">居家用品</a></li>
+      <li class="layui-nav-item"><a href="list.html">小家电</a></li>
+      <li class="layui-nav-item"><a href="list.html">洗护</a></li>
+      <li class="layui-nav-item"><a href="list.html">厨具</a></li>
+      <li class="layui-nav-item"><a href="list.html">日用品</a></li>
+    </ul>
+    <button id="switch">
+      <span></span><span class="second"></span><span class="third"></span>
+    </button>
+  </div>
+</div>
+
+<div class="layui-container house-usershop" id="main">
+<!--  <table id="house-usershop-table" lay-filter="house-usershop-table">-->
+
+<!--  </table>-->
+  <table class="layui-table" lay-data="{height:315, url:'http://localhost:8080/api/card/getCards',skin: 'line' , id:'test'}" lay-filter="test">
+    <thead>
+    <tr>
+      <th lay-data="{field:'name',align:'center', minWidth:260}">商品<div>
+
+      <th lay-data="{field:'price',align:'center', minWidth:160}">单价</th>
+      <th lay-data="{field:'price', align:'center', width:150}">数量</th>
+
+    </tr>
+    </thead>
+  </table>
+
+  <div class="house-usershop-table-num layui-form" id="pay">
+    <input type="checkbox" lay-skin="primary"><span class="numal">已选 0 件</span>
+    <a id="batchDel">批量删除</a>
+    <p id="total">合计: ￥<span>0.00</span></p>
+    <div id="toCope">
+      <p>应付：<big>￥0.00</big></p>
+      <span>满减￥20，包邮</span>
+    </div>
+    <button class="layui-btn">结算</button>
+  </div>
+
+  <p>猜您喜欢</p>
+  <ul class="house-usershop-like">
+
+    <li><a href="detail.html">
+      <div><img src="/common/img/paging_img5.jpg"></div>
+      <p>可爱小瓷杯子</p>
+      <p class="price">￥200</p>
+    </a></li>
+    <li><a href="detail.html">
+      <div><img src="/common/img/paging_img6.jpg"></div>
+      <p>陶瓷面不粘锅</p>
+      <p class="price">￥200</p>
+    </a></li>
+    <li><a href="detail.html">
+      <div><img src="/common/img/paging_img5.jpg"></div>
+      <p>可爱小瓷杯子</p>
+      <p class="price">￥200</p>
+    </a></li>
+    <li><a href="detail.html">
+      <div><img src="/common/img/paging_img6.jpg"></div>
+      <p>陶瓷面不粘锅</p>
+      <p class="price">￥200</p>
+    </a></li>
+    <li><a href="detail.html">
+      <div><img src="/common/img/paging_img5.jpg"></div>
+      <p>可爱小瓷杯子</p>
+      <p class="price">￥200</p>
+    </a></li>
+
+  </ul>
+</div>
+
+<div class="house-footer">
+  <div class="layui-container">
+    <div class="intro">
+      <span class="first"><i class="layui-icon layui-icon-house-shield"></i>7天无理由退换货</span>
+      <span class="second"><i class="layui-icon layui-icon-house-car"></i>满99元全场包邮</span>
+      <span class="third"><i class="layui-icon layui-icon-house-diamond"></i>100%品质保证</span>
+      <span class="last"><i class="layui-icon layui-icon-house-tel"></i>客服400-2888-966</span>
+    </div>
+    <div class="about">
+      <span class="layui-breadcrumb" lay-separator="|">
+        <a href="about.html">关于我们</a>
+        <a href="about.html">帮助中心</a>
+        <a href="about.html">售后服务</a>
+        <a href="about.html">配送服务</a>
+        <a href="about.html">关于货源</a>
+      </span>
+      <p>家居商城版权所有 &copy; 2012-2020</p>
+    </div>
+  </div>
+</div>
+
+
+
+<!--vue-->
+<script src="/plugin/vue/vue.js"></script>
+<!--vue-cookies-->
+<script src="/plugin/vue-cookies/vue-cookies.js"></script>
+<!--axios-->
+<script src="/plugin/axios/axios.js"></script>
+<!--layui-->
+<script src="/plugin/layui/layui.js"></script>
+<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+<!--[if lt IE 9]>
+<script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+<script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+<script type="text/html" id="goodsTpl">
+  <div>
+    <img src="{{d.avatar}}">
+    <div style="display: inline-block; text-align: left; vertical-align: top;">
+      <p>{{d.name}}</p>
+      <p>红色  1500W</p>
+    </div>
+  </div>
+</script>
+
+<script type="text/html" id="priceTpl">
+  <p><span class="price">{{d.price}}</span><del><!--{{d.price}}--></del></p>
+</script>
+
+<script type="text/html" id="numTpl">
+  <div class="numVal">
+    <button class="layui-btn layui-btn-primary sup">-</button>
+    <input type="text" class="layui-input"  value="{{d.number}}">
+    <button class="layui-btn layui-btn-primary sub">+</button>
+  </div>
+</script>
+
+<script type="text/html" id="totalTpl">
+  <span class="total" style="color: #cd2d15;">￥{{(d.price.slice(0)*d.number).toFixed(2)}}</span>
+</script>
+
+<script type="text/html" id="shopTpl">
+  <a lay-event="del" >删除</a>
+</script>
+
+<script>
+  layui.config({
+    base: '/common/js/'
+  }).use('house1');
+</script>
+<script>
+  new Vue({
+    el:'#pay',
+    mounted() {
+      console.log(this.$cookies.get("token"));
+      layui.use('table', ()=> {
+        const table = layui.table;
+        const form=layui.form;
+        let $=layui.$;
+        const goodsVal = $(".house-usershop").find("#total").children("span")
+                ,copyWith = $(".house-usershop").find("#toCope").children("p").children("big")
+                ,copyTips = $(".house-usershop").find("#toCope").children("span");
+        $(".house-usershop").find("#batchDel").on('click',  ()=> {
+          var checkStatus = table.checkStatus('house-usershop-table')
+                  , checkData = checkStatus.data;
+          if (checkData.length === 0) {
+            layer.msg('请选择数据');
+          } else {
+            //执行 Ajax 操作之后再重载 删除选中cookie
+            console.log("checkData",checkData);
+
+
+            let jsonCards=JSON.parse(this.$cookies.get("cards"));
+            console.log("length",checkData.length,jsonCards.length,jsonCards);
+            if(checkData.length===jsonCards.length){
+              this.$cookies.set("cards","[]");
+            }else{
+              for(let i=0;i<jsonCards.length ;i++){
+                if(jsonCards[i].id === checkData[i].id){
+                  jsonCards.pop();
+                }
+              }
+              console.log(jsonCards)
+              this.$cookies.set("cards",JSON.stringify(jsonCards));
+            }
+
+
+            table.reload('house-usershop-table');
+            $(".house-usershop-table-num").children("input")[0].checked = false;
+            form.render('checkbox');
+            $(".house-usershop-table-num").children(".numal").html('已选 0 件');
+            copyWith[0].innerHTML = goodsVal[0].innerHTML = '￥0.00';
+            copyTips.css("display", "none");
+            layer.msg('已删除');
+          }
+        });
+      });
+    }
+  });
+  new Vue({
+    el:'#shopTpl',
+    mounted(){
+      layui.use('table', ()=> {
+        const table = layui.table;
+        table.on('tool(house-usershop-table)', (obj)=>{
+          var data = obj.data;
+          console.log(data ,"fdffdf");
+          if(obj.event === 'del'){
+            layer.confirm('确定删除此物品？', (index)=>{
+              let jsonCards=JSON.parse(this.$cookies.get("cards"));
+              for(let i=0;i<jsonCards.length ;i++){
+                if(jsonCards[i].goodsId === data.goodsId){
+                  jsonCards.pop();
+                  break;
+                }
+              }
+              this.$cookies.set("cards",JSON.stringify(jsonCards));
+              obj.del();
+              layer.close(index);
+              //向服务端发送删除指令
+            });
+          }
+        });
+      });
+    },
+    watch:{
+      a:val=>console.log(val)
+    }
+  });
+</script>
+</body>
+</html>

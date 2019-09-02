@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>家居商城-购物车</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<!--    <link rel="stylesheet" type="text/css" href="/common/css/main.css">-->
+    <link rel="stylesheet" href="/plugin/layui/css/layui.css">
+    <link rel="stylesheet" href="/common/css/index.css">
+</head>
+<body>
+
+<!--jquery-->
+<script src="/plugin/jquery/jquery.js"></script>
+<!--页面顶部-->
+<div class="house-header">
+    <script>
+        $(function(){$('.house-header').load('./header.html');});
+    </script>
+</div>
+
+<div class="layui-container house-usershop content content-nav-base shopcart-content" id="cart">
+    <div class="cart w1200">
+        <div class="cart-table-th">
+            <div class="th th-chk">
+                <div class="select-all">
+                    <div class="cart-checkbox">
+                        <input class="check-all check" id="allCheckked" type="checkbox" value="true">
+                    </div>
+                    <label>&nbsp;&nbsp;全选</label>
+                </div>
+            </div>
+            <div class="th th-item">
+                <div class="th-inner">
+                    商品
+                </div>
+            </div>
+            <div class="th th-price">
+                <div class="th-inner">
+                    单价
+                </div>
+            </div>
+            <div class="th th-amount">
+                <div class="th-inner">
+                    数量
+                </div>
+            </div>
+            <div class="th th-sum">
+                <div class="th-inner">
+                    小计
+                </div>
+            </div>
+            <div class="th th-op">
+                <div class="th-inner">
+                    操作
+                </div>
+            </div>
+        </div>
+        <div class="OrderList">
+            <div class="order-content" id="list-cont">
+                <div class="house-usershop-table-none" v-show="cardList.length===0">
+                    <div><img src="/common/img/shopnone.png"></div>
+                    <p>购物车空空如也</p><a class="layui-btn layui-btn-primary" href="list.html">去逛逛</a>
+                </div>
+                <ul class="item-content layui-clear" v-for="(v,i) in cardList">
+                    <li class="th th-chk">
+                        <div class="select-all">
+                            <div class="cart-checkbox">
+                                <input class="CheckBoxShop check getStatic" :cid="i" type="checkbox" num="all" name="select-all" value="true">
+                            </div>
+                        </div>
+                    </li>
+                    <li class="th th-item">
+                        <div class="item-cont">
+                            <a href="javascript:;"><img :src="v.avatar" alt=""></a>
+                            <div class="text">
+                                <div class="title">{{v.name}}</div>
+                                <p><span>粉色</span>  <span>130</span>cm</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="th th-price">
+                        <span class="th-su">{{v.price}}</span>
+                    </li>
+                    <li class="th th-amount">
+                        <div class="box-btn layui-clear">
+                            <div class="less layui-btn" @click="reduce(i)">-</div>
+                            <input class="Quantity-input" type="" name="" v-model="v.number" disabled="disabled">
+                            <div class="add layui-btn" @click="plus(i)">+</div>
+                        </div>
+                    </li>
+                    <li class="th th-sum">
+                        <span class="sum">{{v.price * v.number | priceFormat}}</span>
+                    </li>
+                    <li class="th th-op">
+                        <span class="dele-btn" @click="remove(i)">删除</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="FloatBarHolder layui-clear">
+            <div class="th th-chk">
+                <div class="select-all">
+                    <div class="cart-checkbox">
+                        <input class="check-all check" id="" name="select-all" type="checkbox"  value="true">
+                    </div>
+                    <label>&nbsp;&nbsp;已选<span class="Selected-pieces">0</span>件</label>
+                </div>
+            </div>
+            <div class="th batch-deletion">
+                <span class="batch-dele-btn" @click="batRemove()">批量删除</span>
+            </div>
+            <div class="th Settlement">
+                <button class="layui-btn" @click="pay()">提交订单</button>
+            </div>
+            <div class="th total">
+                <p>应付：<span class="pieces-total">0</span></p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="layui-container house-usershop" id="like">
+    <p>猜您喜欢</p>
+    <ul class="house-usershop-like">
+
+        <li v-for="v in like"><a href="javascript:void(0)"  @click="detail(v.id)">
+            <div><img :src="v.img"></div>
+            <p>{{v.name}}</p>
+            <p class="price">￥{{v.price}}</p>
+        </a></li>
+
+    </ul>
+</div>
+
+
+<!--页面底部-->
+<div class="house-footer">
+    <script>
+        $(function(){$('.house-footer').load('./footer.html');});
+    </script>
+</div>
+
+
+
+
+<!--vue-->
+<script src="/plugin/vue/vue.js"></script>
+<!--vue-cookies-->
+<script src="/plugin/vue-cookies/vue-cookies.js"></script>
+<!--axios-->
+<script src="/plugin/axios/axios.js"></script>
+<!--layui-->
+<script src="/plugin/layui/layui.js"></script>
+<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+<!--[if lt IE 9]>
+<script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+<script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+<script>
+    //全局配置
+    // axios.defaults.baseURL ='http://mall.jynb.xyz:9000/api/';
+    // axios.defaults.baseURL ='http://mall.lqcnb.cn:9000/api/';
+    // axios.defaults.baseURL ='http://localhost:8080/api/';
+    axios.defaults.baseURL ='http://mall.lqcnb.cn/api/';
+    axios.defaults.timeout =6000;
+    axios.interceptors.request.use(config => {
+            config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+            if (this.token) {
+                config.headers.common['token'] =this.token;
+            }
+            return config
+        },
+        err => {return Promise.reject(err)}
+    );
+    layui.config({
+        base: '/common/js/' //你存放新模块的目录，注意，不是layui的模块目录
+    }).use(['car','house'],function(){
+        var $ = layui.$,car = layui.car;
+        car.init()
+    });
+    new Vue({
+        el:'#like',
+        data:{
+            like:[]
+        },mounted() {
+            axios.get(`goods/cartlike`).then(
+                response => {
+                    this.like=response.data.data;
+                }
+            );
+        },methods: {
+            detail:function (id) {
+                window.location.href="detail.html?id="+id
+            },
+        }
+    });
+    new Vue({
+        el:'#cart',
+        data(){
+            return{
+                cardList:[],
+                token:'',
+                state:true,
+            }
+        },
+        mounted(){
+            this.cardList=JSON.parse(this.$cookies.get("cards"));
+            this.token=this.$cookies.get("token");
+
+
+
+        },
+        methods:{
+            cheStock:function(index,number){//检查库存
+                axios.get(`goods/getById/${this.cardList[index].goodsId}`)
+                    .then(response=>{
+                        console.log(number,response.data.stock);
+                            this.state=number<response.data.stock?true:false;
+                            console.log( this.state);
+                            if(!this.state){
+                                this.cardList[index].number=response.data.stock;
+                                //this.$cookies.set("cards",JSON.stringify(this.cardList),60 * 60 * 24 * 7);
+                                layer.msg("库存不足 请联系管理员");
+                            }
+                    });
+
+            },
+            pay:function(){
+                if(this.token){
+                   window.location="order.html";
+                }else{
+                    layer.msg("请先登录");
+                    window.location="login.html";
+                }
+            },
+            plus:function (index) {//添加商品数量
+                let  number=parseInt(this.cardList[index].number);
+                this.cheStock(index,number,this.state);
+                if(this.state){
+                    number+=1;
+                    this.cardList[index].number=number.toString();
+                    console.log(number);
+                    if(this.token){//用户登录
+                        axios({
+                            method:'get',
+                            url:`cart/updateNumber/${this.cardList[index].goodsId}/${this.cardList[index].number}`
+                        }).then(response=>console.log(response.data.msg)).catch(error=>layer.msg(error));
+                    }else{
+                        this.$cookies.set("cards",JSON.stringify(this.cardList),60 * 60 * 24 * 7);
+                    }
+                }else{
+                    layer.msg("库存不足 请联系管理员");
+                }
+
+
+            },
+            reduce:function (index) {
+                let  number=parseInt(this.cardList[index].number);
+                if(number>1)
+                number-=1;
+                this.cardList[index].number=number.toString();
+                if(this.token) {
+                    axios.get(`cart/updateNumber/${this.cardList[index].goodsId}/${this.cardList[index].number}`)
+                        .then(response=>console.log(response.data.msg)).catch(error=>layer.msg(error));
+                }else{
+                    this.$cookies.set("cards",JSON.stringify(this.cardList),60 * 60 * 24 * 7);
+                }
+
+                console.log(number);
+            },
+            remove:function(id){
+                layer.confirm('你确定要删除吗',{icon: 3,
+                    yes:(index,layero)=>{
+                        layer.close(index);
+                        this.cardList.splice(id,1);
+                        this.$cookies.set("cards",JSON.stringify(this.cardList),60 * 60 * 24 * 7);
+                    }
+                })
+
+            },
+            batRemove:function () {
+
+
+                //方法1
+                //$('input:checkbox:checked') 等同于 $('input[type=checkbox]:checked')
+                //意思是选择被选中的checkbox
+                // $.each($('input:checkbox:checked'), function () {
+                //     window.alert("你选了：" +
+                //         $('input[type=checkbox]:checked').length + "个，其中有：" + $(this).attr("cid"));
+                // });
+                //方法2
+                var ids=[];
+                $.each($('input:checkbox'),function(){
+                    if(this.checked && $(this).attr("cid")!=undefined){
+                        ids.push($(this).attr("cid"));
+                    }
+                });
+                console.log(ids);
+                if(ids.length==0){
+                    layer.msg("请选择商品");
+                }else{
+                    layer.confirm('你确定要批量删除吗',{icon: 3,btn:['确定','取消'],title:"提示"},(index)=>{
+                            layer.close(index);
+                            if(ids.length==this.cardList.length){
+                                this.$cookies.set("cards",[]);
+                            }else{
+                                for(i of  ids){
+                                    this.cardList.splice(i,1);
+                                    this.$cookies.set("cards",JSON.stringify(this.cardList),60 * 60 * 24 * 7);
+                                }
+                            }
+                        });
+                 }
+
+
+            }
+
+        },
+        watch:{
+            cardList:(val,old)=>console.log(val,old),
+            token:(val,old)=>console.log(val,old)
+        },
+        filters:{
+            priceFormat(value) {
+                var toFixedNum = value.toFixed(2);
+                return toFixedNum;
+            }
+        }
+    })
+</script>
+<script>
+
+</script>
+</body>
+</html>

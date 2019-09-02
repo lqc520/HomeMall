@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>家居商城-个人中心</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" href="/plugin/layui/css/layui.css">
+  <link rel="stylesheet" href="/common/css/index.css">
+</head>
+<body class="user">
+
+<!--jquery-->
+<script src="/plugin/jquery/jquery.js"></script>
+<!--页面顶部-->
+<div class="house-header">
+  <script>
+    $(function(){$('.house-header').load('./header.html');});
+  </script>
+</div>
+
+<div class="layui-container userpublic house-userPer" id="main">
+  <div class="layui-row layui-col-space20">
+    <p class="layui-hide-xs title">首页 &gt; <span>个人中心</span></p>
+    <div class="layui-col-sm2">
+      <ul class="user-list">
+        <li class="active"><a href="user.html">个人中心</a></li>
+        <li><a href="userinfo.html">个人资料</a></li>
+        <li><a href="javascript:void (0)" @click="developed()">消息中心</a></li>
+        <li><a href="useradd.html">地址管理</a></li>
+        <li><a href="usercol.html">我的收藏</a></li>
+        <li><a href="javascript:void (0)" @click="developed()">优惠券</a></li>
+        <li><a href="javascript:void (0)" @click="developed()">服务中心</a></li>
+      </ul>
+    </div>
+    <div class="layui-col-sm10">
+      <div class="user-person">
+        <div class="person">
+          <img src="/common/img/person.png">
+          <div class="name">
+            <p>脐橙</p>
+            <span><i>VIP100</i></span>
+          </div>
+        </div>
+        <ul>
+          <li>优惠券<span>0张</span></li>
+          <li>礼品卡<span>0张</span></li>
+          <li>积分<span>10000</span></li>
+          <li>待发货<span>12个</span></li>
+          <li>待收货<span>2个</span></li>
+          <li>待评价<span>2个</span></li>
+        </ul>
+      </div> 
+    </div>
+    <div class="layui-col-sm10" >
+      <div class="layui-tab layui-tab-brief">
+        <ul class="layui-tab-title">
+          <li class="layui-this" @click="changeById('-1')">全部订单</li>
+          <li @click="changeById('0')">等待发货</li>
+          <li @click="changeById('1')">已发货</li>
+          <li @click="changeById('3')">交易完成</li>
+        </ul>
+        <div class="layui-tab-content" >
+          <div class="layui-tab-item layui-show">
+            <table id="house-user-order"  lay-filter="house-user-order"></table>
+            <table id="house-user-order0" class="house-user-order" lay-filter="house-user-order"></table>
+            <table id="house-user-order1" class="house-user-order" lay-filter="house-user-order"></table>
+            <table id="house-user-order3" class="house-user-order" lay-filter="house-user-order"></table>
+          </div>
+          <div class="layui-tab-item">
+            
+          </div>
+        </div>
+      </div>      
+    </div>
+  </div>
+</div>
+
+<!--jquery-->
+<script src="/plugin/jquery/jquery.js"></script>
+<!--页面底部-->
+<div class="house-footer">
+  <script>
+    $(function(){$('.house-footer').load('./footer.html');});
+  </script>
+</div>
+
+
+<script type="text/html" id="orderTpl">
+  <div style="text-align: left; display: inline-block; vertical-align: middle;">
+    <p>订单号：{{d.order_number}}</p>
+    <p>交易单号：{{d.payment_number}}</p>
+    <p id="time">交易时间：{{d.payment_time}}</p>
+  </div>
+</script>
+<script type="text/html" id="imgTpl">
+  <img src="{{d.goods_img}}">
+</script>
+<script type="text/html" id="priceTpl">
+  <div style="display: inline-block; vertical-align: middle;">
+    <p>￥{{d.freight}}</p>
+    <p>免运费</p>
+  </div>
+</script>
+<script type="text/html" id="stateTpl">
+  {{#  if(d.order_status == 3){ }}
+  <span style="color: #999;">待评价</span>
+  {{#  } else if(d.order_status == 2){ }}
+  <span style="color: #ee715f;">待收货</span>
+  {{#  } else if(d.order_status == 1){ }}
+  <span style="color: #e09b4e;">待发货</span>
+  {{#  } else if(d.order_status == 0){ }}
+  <span style="color: #73c292;">待支付</span>
+  {{#  } else { }}
+  <span style="color: #e0434e;">交易完成</span>
+  {{#  } }}
+</script>
+<script type="text/html" id="handleTpl">
+  <div style="display: inline-block; vertical-align: middle;">
+    <a class="handel" lay-event="check" style="color: #e39d55; cursor: pointer; display: block;">查看物流</a>
+    <a class="handel" lay-event="evaluate" style="color: #e39d55; cursor: pointer; display: block;">收货并评价</a>
+  </div>
+</script>
+<div id="take">
+  <div class="layui-form-item">
+    <label class="layui-form-label">评分</label>
+    <div class="layui-input-inline">
+      <div id="rate"> </div>
+    </div>
+  </div>
+
+  <div class="layui-form-item layui-form-text">
+    <label class="layui-form-label">评价</label>
+    <div class="layui-input-inline">
+      <textarea name="remarks" placeholder="请输入内容" class="layui-textarea"></textarea>
+    </div>
+  </div>
+<!--  <div class="layui-form-item">-->
+<!--    <div class="layui-input-block">-->
+<!--      <button class="layui-btn" lay-submit lay-filter="setmyinfo">确认收货</button>-->
+<!--      <button type="reset" class="layui-btn layui-btn-primary">重新填写</button>-->
+<!--    </div>-->
+<!--  </div>-->
+</div>
+
+<!--vue-->
+<script src="/plugin/vue/vue.js"></script>
+<!--vue-cookies-->
+<script src="/plugin/vue-cookies/vue-cookies.js"></script>
+<!--axios-->
+<script src="/plugin/axios/axios.js"></script>
+<!--layui-->
+<script src="/plugin/layui/layui.js"></script>
+<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+<!--[if lt IE 9]>
+  <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+  <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+<script>
+  layui.config({
+    base: '/common/js/' 
+  }).use('house');
+  new Vue({
+    el:'#main',
+    data(){
+      return{
+        token:this.$cookies.get("token"),
+        getData:'',
+        //data_url:"http://mall.jynb.xyz:9000/api/order/getOrder/-1"
+
+      }
+    },
+    methods:{
+      //个人中心——订单
+      changeById:function (id) {
+        console.log(id);
+        this.getData(id);
+      },
+      developed:function () {
+        layer.msg("待开发");
+      }
+    }
+    ,
+    mounted(){
+      // axios.defaults.baseURL ='http://mall.jynb.xyz:9000/api/';
+      // axios.defaults.baseURL ='http://mall.lqcnb.cn:9000/api/';
+      // axios.defaults.baseURL ='http://localhost:8080/api/';
+      axios.defaults.baseURL ='http://mall.lqcnb.cn/api/';
+     this.getData=(id)=>{
+       layui.use('table',()=>{
+         let table=layui.table;
+         table.render({
+           elem: "#house-user-order"
+           ,url:  "http://mall.lqcnb.cn/api/order/getOrder/"+id,
+           headers: {token:this.token},
+           page: false
+           ,skin: 'line',
+           id:'reload'
+           ,cols: [[
+             {title:'订单信息', align:'center', templet: '#orderTpl',width:350}
+             ,{field:'goods_img', title:'订购商品', templet: '#imgTpl', align:'center'}
+             ,{field:'quantity', title:'件数', align:'center', width:80}
+             ,{title:'价格', align:'center', templet: '#priceTpl', width:100}
+             ,{title:'订单状态', align:'center', templet: '#stateTpl', width:100}
+             ,{title:'订单操作', align:'center', templet: '#handleTpl', width:120}
+           ]]
+         });
+
+       });
+     };
+      this.getData(-1);
+
+
+    }
+  });
+
+  function Format(datetime,fmt) {
+    if (parseInt(datetime)==datetime) {
+      if (datetime.length==10) {
+        datetime=parseInt(datetime)*1000;
+      } else if(datetime.length==13) {
+        datetime=parseInt(datetime);
+      }
+    }
+    datetime=new Date(datetime);
+    var o = {
+      "M+" : datetime.getMonth()+1,                 //月份
+      "d+" : datetime.getDate(),                    //日
+      "h+" : datetime.getHours(),                   //小时
+      "m+" : datetime.getMinutes(),                 //分
+      "s+" : datetime.getSeconds(),                 //秒
+      "q+" : Math.floor((datetime.getMonth()+3)/3), //季度
+      "S"  : datetime.getMilliseconds()             //毫秒
+    };
+    if(/(y+)/.test(fmt))
+      fmt=fmt.replace(RegExp.$1, (datetime.getFullYear()+"").substr(4 - RegExp.$1.length));
+    for(var k in o)
+      if(new RegExp("("+ k +")").test(fmt))
+        fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+    return fmt;
+  }
+  layui.use('rate', function(){
+    var rate = layui.rate;
+    //渲染
+    var ins1 = rate.render({
+      elem: '#rate',  //绑定元素
+      choose: function(value){
+        if(value > 4) layer.msg("谢谢你的认可，欢迎再次光临");
+        if(value < 4) layer.msg("我们会持续改善 请继续关注我们")
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

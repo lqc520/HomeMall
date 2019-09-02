@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>家居商城-收藏</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" href="/plugin/layui/css/layui.css">
+  <link rel="stylesheet" href="/common/css/index.css">
+</head>
+<body class="user">
+
+<!--jquery-->
+<script src="/plugin/jquery/jquery.js"></script>
+<!--页面顶部-->
+<div class="house-header">
+  <script>
+    $(function(){$('.house-header').load('./header.html');});
+  </script>
+</div>
+
+<div class="layui-container house-usercol userpublic">
+  <div class="layui-row layui-col-space20">
+    <p class="layui-hide-xs title">首页 &gt; <span>个人中心</span></p>
+    <div class="layui-col-sm2">
+      <ul class="user-list">
+        <li><a href="user.html">个人中心</a></li>
+        <li><a href="">消息中心</a></li>
+        <li><a href="useradd.html">地址管理</a></li>
+        <li class="active"><a href="usercol.html">我的收藏</a></li>
+        <li><a href="">优惠券</a></li>
+        <li><a href="">服务中心</a></li>
+      </ul>
+    </div>
+
+    <div class="layui-col-sm10" id="main">
+      <div class="layui-tab layui-tab-brief">
+        <ul class="layui-tab-title">
+          <li class="layui-this">我的收藏</li>
+        </ul>
+        <div class="layui-tab-content layui-row layui-col-space30">
+
+          <div class="layui-col-xs3" v-for="v in collection">
+            <div class="goods">
+              <img :src="v.img">
+              <p>{{v.name}}</p>
+              <p class="price">￥{{v.price}}</p>
+              <span class="del" @clikc="del()">&times;</span>
+            </div>    
+          </div>
+
+        </div>
+<!--        <div id="userList"></div>-->
+      </div>    
+    </div>
+  </div>
+</div>
+
+<!--页面底部-->
+<div class="house-footer">
+  <script>
+    $(function(){$('.house-footer').load('./footer.html');});
+  </script>
+</div>
+
+<!--vue-->
+<script src="/plugin/vue/vue.js"></script>
+<!--vue-cookies-->
+<script src="/plugin/vue-cookies/vue-cookies.js"></script>
+<!--axios-->
+<script src="/plugin/axios/axios.js"></script>
+<!--layui-->
+<script src="/plugin/layui/layui.js"></script>
+<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+<!--[if lt IE 9]>
+  <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+  <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+<script>
+  layui.config({
+    base: '/common/js/' 
+  }).use('house');
+  new Vue({
+    el:'#main',
+    data:{
+      collection:[],
+      token:''
+    },mounted(){
+      //获取令牌
+      this.token=this.$cookies.get("token");
+      //全局配置
+      // axios.defaults.baseURL ='http://mall.jynb.xyz:9000/api/';
+      // axios.defaults.baseURL ='http://mall.lqcnb.cn:9000/api/';
+      // axios.defaults.baseURL ='http://localhost:8080/api/';
+      axios.defaults.baseURL ='http://mall.lqcnb.cn/api/';
+      // axios.defaults.timeout =6000;
+      axios.interceptors.request.use(config => {
+                config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+                if (this.token) {
+                  config.headers.common['token'] =this.token;
+                }
+                return config
+              },
+              err => {return Promise.reject(err)}
+      );
+      //获取收藏夹
+      if(this.token){
+        axios.get(`/collection/list`).then(response =>{
+          this.collection=response.data.data;
+        })
+      }
+    },methods:{
+      del:function () {
+        layer.msg("删除");
+      }
+    }
+  })
+</script>
+
+
+
+
+</body>
+</html>

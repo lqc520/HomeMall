@@ -1,0 +1,38 @@
+{
+  "code": 0
+  ,"msg": ""
+  ,"count": "100"
+  ,"data": [{
+    "orderid": "152000256"
+    ,"oddno": "152000256"
+    ,"timestamp": "1533281473837"
+    ,"avatar": "https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1174587134,101219285&fm=27&gp=0.jpg"
+    ,"number": "1"
+    ,"price": "100.00"
+    ,"state": "0"
+  },{
+    "orderid": "152000256"
+    ,"oddno": "152000256"
+    ,"timestamp": "1533281473837"
+    ,"avatar": "https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1174587134,101219285&fm=27&gp=0.jpg"
+    ,"number": "1"
+    ,"price": "100.00"
+    ,"state": "1"
+  },{
+    "orderid": "152000256"
+    ,"oddno": "152000256"
+    ,"timestamp": "1533281473837"
+    ,"avatar": "https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1174587134,101219285&fm=27&gp=0.jpg"
+    ,"number": "1"
+    ,"price": "100.00"
+    ,"state": "2"
+  },{
+    "orderid": "152000256"
+    ,"oddno": "152000256"
+    ,"timestamp": "1533281473837"
+    ,"avatar": "https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1174587134,101219285&fm=27&gp=0.jpg"
+    ,"number": "1"
+    ,"price": "100.00"
+    ,"state": "3"
+  }]
+}

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.lqcnb.mall.api.mapper.GoodsMapper">
+  <resultMap id="BaseResultMap" type="cn.lqcnb.mall.api.entity.Goods">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="category_id" jdbcType="INTEGER" property="categoryId" />
+    <result column="sort_id" jdbcType="INTEGER" property="sortId" />
+    <result column="season_id" jdbcType="INTEGER" property="seasonId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="introduce" jdbcType="VARCHAR" property="introduce" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="stock" jdbcType="INTEGER" property="stock" />
+    <result column="freight" jdbcType="DECIMAL" property="freight" />
+    <result column="img" jdbcType="VARCHAR" property="img" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="is_delete" jdbcType="INTEGER" property="isDelete" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="detail_img" jdbcType="LONGVARCHAR" property="detailImg" />
+    <result column="detail" jdbcType="LONGVARCHAR" property="detail" />
+  </resultMap>
+
+    <select id="getPageList" parameterType="map" resultType="cn.lqcnb.mall.api.entity.Goods">
+      SELECT
+          *
+      FROM
+          `mall_goods`
+      <where>
+        <if test="categoryId != null and categoryId != '' and categoryId !=-1 ">
+            and  category_id=#{categoryId}
+        </if>
+        <if test="sortId != null and sortId !='' and sortId !=-1 ">
+            and sort_id=#{sortId}
+        </if>
+        <if test="seasonId != null and seasonId !='' and seasonId !=-1 ">
+            and season_id=#{seasonId}
+        </if>
+      </where>
+
+      <if test="orderType != null and orderType!= '' and orderType == 'byTime' and  byOrder != null and byOrder != '' ">
+             order by create_time ${byOrder}
+      </if>
+
+      <if test="orderType != null and orderType!='' and orderType == 'byPrice' and  byOrder != null and byOrder != ''">
+             order by price ${byOrder}
+      </if>
+
+    </select>
+
+    <select id="getList" parameterType="cn.lqcnb.mall.api.entity.Goods" resultType="map">
+        SELECT
+            *, c.`name` cateName,
+            s.`name` sortName
+        FROM
+            `mall_goods` g,
+            mall_category c,
+            mall_sort s
+        <where>
+          AND  g.category_id = c.id
+          AND g.sort_id = s.id
+          <if test="name != '' and name != null ">
+            and g.name like concat("%",#{name},"%")
+          </if>
+          <if test="categoryId != '' and categoryId != null and categoryId != -1">
+            and g.category_id = #{categoryId}
+          </if>
+          <if test="sortId != '' and sortId != null and sortId != -1" >
+            and g.sort_id = #{sortId}
+          </if>
+        </where>
+
+    </select>
+
+</mapper>
