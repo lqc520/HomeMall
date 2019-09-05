@@ -6,9 +6,13 @@ import cn.lqcnb.mall.api.entity.Card;
 import cn.lqcnb.mall.api.entity.Member;
 import cn.lqcnb.mall.api.service.CardService;
 import cn.lqcnb.mall.api.service.MemberService;
+import cn.lqcnb.mall.common.entity.LayUI;
 import cn.lqcnb.mall.common.entity.R;
+import cn.lqcnb.mall.common.utils.MailUtils;
 import cn.lqcnb.mall.common.utils.TencentSMSUtils.SMSUtils;
 import cn.lqcnb.mall.common.utils.TokenUtil;
+import cn.lqcnb.mall.common.utils.UploadLocalUtil;
+import cn.lqcnb.mall.common.utils.UploadUtil;
 import cn.lqcnb.mall.common.utils.redisUtils.RedisSMSUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -19,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +32,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 
 /**
@@ -50,6 +56,8 @@ public class MemberController {
     @Autowired
     private CardService cardService;
 
+
+    //后期把业务逻辑放到service
     @PassToken
     @ApiOperation(value = "登录")
     @ApiImplicitParams({
@@ -60,7 +68,9 @@ public class MemberController {
     public R login(String mobile, String code, @CookieValue(required = false) String cards,@ApiParam(hidden =true) HttpServletResponse response){
         String SMSCode = redisSMSUtil.getCode(mobile);
         if(code.equals(SMSCode)){
-            Member user = memberService.findOne(new Member(mobile));
+            Member param = new Member();
+            param.setMobile(mobile);
+            Member user = memberService.findOne(param);
             if(user!=null){//登录成功
                 if(!StringUtils.isEmpty(cards)){//前台购物车有商品
                     //解析数据 获取商品id和数量
@@ -103,10 +113,7 @@ public class MemberController {
                             //数据库环节 后期改redis
                             card.setStock(null);
                             cardService.add(card);
-
-
                         }
-
                         i++;
                     }
                     System.out.println("cardsList:"+cardsList);
@@ -135,15 +142,10 @@ public class MemberController {
                 jsonUser.put("token",token);
                 //添加cookie
                 Cookie tokenCookie = new Cookie("token",token);
-                tokenCookie.setMaxAge(7 * 24 * 60 * 60);
+//                tokenCookie.setMaxAge(7 * 24 * 60 * 60);
                 tokenCookie.setPath("/");
                 //tokenCookie.setDomain("mall.lqcnb.cn");
                 response.addCookie(tokenCookie);
-                //不需要userId 在Token取
-                Cookie userId = new Cookie("userId",user.getId().toString());
-//                userId.setMaxAge(7 * 24 * 60 * 60);
-                userId.setPath("/");
-                response.addCookie(userId);
                 return R.ok("登录成功",jsonUser);
             }else{
                 return R.error("请先注册");
@@ -165,7 +167,9 @@ public class MemberController {
 
         String SMSCode = redisSMSUtil.getCode(mobile);
         if(code.equals(SMSCode)){
-            boolean update = memberService.add(new Member(mobile));
+            Member param = new Member();
+            param.setMobile(mobile);
+            boolean update = memberService.add(param);
             return R.ok("注册成功",update);
         }else{
             return R.error("验证码错误");
@@ -178,7 +182,9 @@ public class MemberController {
     @ApiImplicitParam(name = "mobile" ,value = "手机号",paramType="path")
     @GetMapping("checkMobile/{mobile}")
     public R checkMobile(@PathVariable String mobile){
-        Member one = memberService.findOne(new Member(mobile));
+        Member param = new Member();
+        param.setMobile(mobile);
+        Member one = memberService.findOne(param);
         if(one==null){
             return R.error("您的手机号未注册 将进行注册");
         }else{
@@ -211,6 +217,92 @@ public class MemberController {
         }
         return R.error("获取短信验证码错误");
     }
+
+
+    @ApiOperation(value = "上传图片")
+    @PostMapping("/upload")
+    public R upload(@RequestParam(value = "file") MultipartFile file){
+        if(file.isEmpty()){
+            return R.error();
+        }
+        //阿里云 linux云端部署上传到阿里云oss
+        String AliPath = UploadUtil.upload(file,"mall");
+        //win10 本地部署 上传到本地资源
+//        String winPath = UploadLocalUtil.addImg(file);
+        return R.ok("ok", AliPath);
+    }
+
+
+    @ApiOperation(value = "更新用户信息")
+    @ApiImplicitParam(name = "member" ,value = "用户信息",paramType="query",required = true)
+    @PostMapping("/update")
+    public R upload(Member member){
+        Member cur = memberService.getById(member.getId());
+        if(cur.getIsActivate()==1 || !cur.getEmail().equals(member.getEmail())){
+            String code = UUID.randomUUID().toString().replace("-", "");
+            redisSMSUtil.setEmailCodeTime(member.getEmail(),code,60*60);
+            String content = "<html><head></head><body><h1>这是一封激活邮件,激活请点击以下链接</h1><h3><a href='http://mall.lqcnb.cn/api/member/state/"
+                    + code +"/"+member.getEmail()+ "'>http://mall.lqcnb.cn/api/member/state/" + code+"/"+member.getEmail()
+                    + "</href></h3></body></html>";
+            new Thread(new MailUtils(member.getEmail(),content)).start();
+        }
+        if(memberService.update(member)){
+            return R.ok("请去邮箱点击验证");
+        }
+        return R.error();
+    }
+
+
+    @ApiOperation(value = "激活邮箱")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "code" ,value = "激活码",paramType="path",required = true),
+            @ApiImplicitParam(name = "email" ,value = "邮箱",paramType="path",required = true)
+    })
+    @GetMapping("/state/{code}/{email}")
+    public R upload(@PathVariable String code,@PathVariable String email){
+        String emailCode = redisSMSUtil.getEmailCode(email);
+        if(emailCode.equals(code)){
+            memberService.updateByEmail(email);
+            return R.ok();
+        }
+        return R.error();
+    }
+
+
+    @UserLoginToken
+    @ApiOperation(value = "获取用户信息")
+    @ApiImplicitParam(name = "token" ,value = "令牌",paramType="header",required = true)
+    @GetMapping("/get")
+    public R get(@RequestHeader String token){
+        Member user = memberService.getById(Integer.parseInt(TokenUtil.getUserId(token)));
+        if(user!=null){
+            return R.ok(user);
+        }
+        return R.error();
+    }
+
+
+    @ApiOperation(value = "获取用户列表")
+    @GetMapping("/list")
+    public LayUI list(){
+        List<Member> userList = memberService.findAll();
+        if(userList.size()!=0){
+            return LayUI.ok(String.valueOf(userList.size()),userList);
+        }
+        return LayUI.error();
+    }
+
+
+    @ApiOperation(value = "添加用户")
+    @ApiImplicitParam(name = "member" ,value = "用户",paramType="query",required = true)
+    @GetMapping("/add")
+    public R add(Member member){
+         if(memberService.add(member)){
+             return R.ok();
+         }
+         return R.error();
+    }
+
 
 
     @UserLoginToken

@@ -23,6 +23,8 @@ public class Category {
      */
     private Integer sort;
 
+    private String wid;
+
     /**
      * 是否删除 0正常  1删除
      */
@@ -101,6 +103,20 @@ public class Category {
      */
     public void setSort(Integer sort) {
         this.sort = sort;
+    }
+
+    /**
+     * @return wid
+     */
+    public String getWid() {
+        return wid;
+    }
+
+    /**
+     * @param wid
+     */
+    public void setWid(String wid) {
+        this.wid = wid;
     }
 
     /**

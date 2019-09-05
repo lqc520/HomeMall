@@ -16,17 +16,16 @@ layui.define(['table', 'form'], function(exports){
   //用户管理
   table.render({
     elem: '#LAY-user-manage'
-    ,url: layui.setter.base + 'json/useradmin/webuser.js' //模拟接口
+    ,url: 'http://mall.lqcnb.cn/api/member/list' //模拟接口
     ,cols: [[
       {type: 'checkbox', fixed: 'left'}
       ,{field: 'id', width: 100, title: 'ID', sort: true}
-      ,{field: 'username', title: '用户名', minWidth: 100}
+      ,{field: 'mobile', title: '手机', minWidth: 100}
       ,{field: 'avatar', title: '头像', width: 100, templet: '#imgTpl'}
-      ,{field: 'phone', title: '手机'}
+      ,{field: 'nickname', title: '昵称'}
       ,{field: 'email', title: '邮箱'}
-      ,{field: 'sex', width: 80, title: '性别'}
-
-      ,{field: 'jointime', title: '加入时间', sort: true}
+      ,{field: 'isActivate', title: '是否激活',sort: true,templet:'#activeTpl'}
+      ,{field: 'createTime', title: '加入时间', sort: true,templet:'<div>{{ Format(d.createTime,"yyyy-MM-dd h:m:s")}}</div>'}
       ,{title: '操作', width: 150, align:'center', fixed: 'right', toolbar: '#table-useradmin-webuser'}
     ]]
     ,page: true

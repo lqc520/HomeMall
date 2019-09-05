@@ -59,7 +59,7 @@ public class MailUtils implements Runnable {
 			// 2.2设置接收人
 			message.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
 			// 2.3设置邮件主题
-			message.setSubject("账号激活");
+			message.setSubject("账号激活 有效期1天");
 			// 2.4设置邮件内容 外部获取
 			
 			message.setContent(content, "text/html;charset=UTF-8");

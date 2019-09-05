@@ -80,7 +80,7 @@ layui.define('view', function(exports){
         }
       console.log(value);
         admin.req( {
-          url: 'http://localhost:8080/api/user/getRegisterCode/'+value
+          url: 'http://mall.lqcnb.cn/api/user/getRegisterCode/'+value
           ,type: 'get'
           ,success: function(res){
             layer.msg('验证码已发送至你的手机，5分钟内有效', {

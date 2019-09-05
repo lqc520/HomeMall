@@ -45,10 +45,32 @@ public class CollectionController {
     })
     @GetMapping("add/{id}")
     public R add(@RequestHeader String token, @PathVariable Integer id){
+
+
         Collection collection = new Collection();
         collection.setGoodsId(id);
         collection.setMemberId(Integer.parseInt(TokenUtil.getUserId(token)));
-        if(collectionService.add(collection)){
+        Collection one = collectionService.findOne(collection);
+        if(one==null){
+            if(collectionService.add(collection)){
+                return R.ok();
+            }
+            return R.error();
+        }
+       return R.error("已收藏");
+
+    }
+
+
+    @UserLoginToken
+    @ApiOperation(value = "删除")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id" ,value = "商品id",paramType="path",required = true),
+            @ApiImplicitParam(name = "token" ,value = "令牌",paramType="header",required = true)
+    })
+    @GetMapping("delete/{id}")
+    public R del(@RequestHeader String token, @PathVariable Integer id){
+        if(collectionService.deleteByUidAndGid(Integer.parseInt(TokenUtil.getUserId(token)),id)){
             return R.ok();
         }
         return R.error();

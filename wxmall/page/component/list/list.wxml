@@ -1,0 +1,16 @@
+<wxs src="../../common/utils.wxs" module="tools" />
+<view class="main">
+    <view class="banner">
+        <image src="/image/banner6.jpg"></image>
+    </view>
+
+    <view class="list-box">
+        <view class="newest-list" wx:for="{{sortList}}">
+            <navigator url="../details/details?id={{item.id}}">
+                <image src="{{item.img}}"></image>
+                <view class="newest-text"><text>{{tools.sub(item.name)}}</text></view>
+                <view class="newest-text"><text>￥ {{item.price}}</text></view>
+            </navigator>
+        </view>
+    </view>
+</view>

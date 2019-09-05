@@ -12,4 +12,5 @@ public interface GoodsMapper extends Mapper<Goods> {
     @Select("SELECT * FROM `mall_goods` ORDER BY  RAND() LIMIT #{limit}")
     public List<Goods> getRandList(Integer limit);
     public List<Map> getList(Goods goods);
+    public List<Goods> search(String name);
 }

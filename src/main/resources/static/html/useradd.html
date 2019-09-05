@@ -86,11 +86,9 @@
       }
     },mounted(){
       //地址管理——表格
-      //  http://localhost:8080/
+      //  http://mall.lqcnb.cn/
       this.token=this.$cookies.get("token");
-      // axios.defaults.baseURL ='http://mall.jynb.xyz:9000/api/';
-      // axios.defaults.baseURL ='http://mall.lqcnb.cn:9000/api/';
-      axios.defaults.baseURL ='http://localhost:8080/api/';
+      axios.defaults.baseURL ='http://mall.lqcnb.cn/api/';
       axios.defaults.timeout =6000;
       axios.interceptors.request.use(config => {
                 config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
@@ -106,7 +104,7 @@
                 const table = layui.table;
         table.render({
           elem: '#user-address'
-          ,url: 'http://localhost:8080/api/address/getById',
+          ,url: 'http://mall.lqcnb.cn/api/address/getById',
           headers: {token: this.token}
           ,skin: 'line',
           path:false

@@ -33,35 +33,37 @@
             </ul>
         </div>
         <div class="layui-col-sm10">
-            <form class="layui-form layui-form-pane" action="">
-                <div class="layui-form-item">
-                    <label class="layui-form-label">用户名</label>
-                    <div class="layui-input-inline">
-                        <input type="text" name="username" required  lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+            <form class="layui-form layui-form-pane" id="userForm">
+                <div class="layui-form" lay-filter="layuiadmin-form-useradmin" id="layuiadmin-form-useradmin" style="padding: 20px 0 0 0;">
+                   <div class="layui-form-item">
+                        <label class="layui-form-label">手机号码</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="mobile" lay-verify="phone" v-model="user.mobile" disabled placeholder="请输入号码" autocomplete="off" class="layui-input">
+                            <input type="hidden" name="id" v-model="user.id">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">昵称</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="nickname" lay-verify="required" v-model="user.nickname" placeholder="请输入昵称" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">邮箱</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="email" lay-verify="email" v-model="user.email" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">头像</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="file" lay-verify="required" v-model="user.avatar" placeholder="请上传头像" autocomplete="off" class="layui-input" >
+                            <input type="hidden" id="avatar" name="avatar" v-model="user.avatar">
+                        </div>
+                        <button style="float: left;" type="button" class="layui-btn" id="layuiadmin-upload-useradmin">上传头像</button>
                     </div>
                 </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">密码</label>
-                    <div class="layui-input-inline">
-                        <input type="password" name="password" required  lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">邮箱</label>
-                    <div class="layui-input-inline">
-                        <input type="text" name="email" required  lay-verify="required" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
-                    </div>
-                </div>
-
-
-                <div class="layui-form-item">
-                    <div class="layui-input-inline">
-                        <button type="button" class="layui-btn" id="test1">
-                            <i class="layui-icon">&#xe67c;</i>上传头像
-                        </button>
-                        <button class="layui-btn" lay-submit lay-filter="formDemo">保存</button>
-                    </div>
-                </div>
+                <button style="float: left;" type="button" id="submit" class="layui-btn" >确认修改</button>
             </form>
         </div>
     </div>
@@ -94,26 +96,60 @@
 <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
 <![endif]-->
 <script>
+    axios.defaults.baseURL ='http://mall.lqcnb.cn/api/';
+    // axios.defaults.baseURL ='http://mall.lqcnb.cn/api/';
     layui.config({
         base: '/common/js/'
-    }).use('house');
-
-    layui.use('upload', function(){
+    }).use(['house','upload'],function () {
         var upload = layui.upload;
-
-        //执行实例
-        var uploadInst = upload.render({
-            elem: '#test1' //绑定元素
-            ,url: '/upload/' //上传接口
+        var $=layui.$;
+        upload.render({
+            elem: '#layuiadmin-upload-useradmin'
+            ,url:'http://mall.lqcnb.cn/api/member/upload'
+            ,accept: 'images'
+            ,method: 'post'
+            ,acceptMime: 'image/*'
             ,done: function(res){
-                //上传完毕回调
-            }
-            ,error: function(){
-                //请求异常回调
+                $(this.item).prev("div").children("input").val(res.data);
+                $('#avatar').val(res.data);
             }
         });
+        $('#submit').click(function () {
+            $.ajax({
+                method:'post',
+                url:'http://mall.lqcnb.cn/api/member/update',
+                data:$('#userForm').serialize(),
+                success:function (data) {
+                    layer.msg("修改成功");
+                }
+            })
+        });
+        $('#userForm')
     });
-
+    new Vue({
+        el:'#userForm',
+        data(){
+            return{
+                token:this.$cookies.get("token"),
+                user:[]
+            }
+        },mounted(){
+            axios.interceptors.request.use(config => {
+                    config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+                    if (this.token) {
+                        config.headers.common['token'] =this.token
+                    }
+                    return config
+                },
+                err => {return Promise.reject(err)}
+            );
+            axios.get('member/get').then(
+                res=>{
+                    this.user=res.data.data
+                }
+            )
+        }
+    })
 </script>
 
 </body>

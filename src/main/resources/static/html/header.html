@@ -14,12 +14,12 @@
     </div>
     <div class="house-banner layui-form">
         <a class="banner" href="index.html">
-            <img src="/common/img/banner.png" alt="家居商城">
+            <img src="/common/img/logo.png" alt="家居商城">
         </a>
         <div class="layui-input-inline">
             <input type="text" placeholder="搜索好物" class="layui-input"><i class="layui-icon layui-icon-house-find"></i>
         </div>
-        <a class="shop" href="cart.html"><i class="layui-icon layui-icon-house-shop"></i><span class="layui-badge">{{cartLength}}</span></a>
+        <a class="shop" href="cart.html"><i class="layui-icon layui-icon-house-shop"></i></a>
     </div>
     <ul class="layui-nav close">
         <li class="layui-nav-item layui-this"><a href="index.html">首页</a></li>
@@ -40,7 +40,7 @@
             return{
                 state:'登录',
                 show:false,
-                cartLength:0,
+                // cartLength:0,
                 token:''
             }
         },mounted() {
@@ -49,27 +49,27 @@
             if(this.token){
                 this.state='已登录';
                 this.show=true;
-                $.ajax({
-                    type: 'get',
-                    timeout: 10000, // 超时时间 10 秒
-                    headers: {
-                        token: this.token
-                    },
-                    url: "http://mall.lqcnb.cn/api/cart/getCount",
-                    dataType: "json",
-                    success: function (data) {
-                        console.log(data);
-                        this.cardList=data.data;
-                    }
-                })
+                // $.ajax({
+                //     type: 'get',
+                //     timeout: 10000, // 超时时间 10 秒
+                //     headers: {
+                //         token: this.token
+                //     },
+                //     url: "http://mall.lqcnb.cn/api/cart/getCount",
+                //     dataType: "json",
+                //     success: function (data) {
+                //         console.log(data);
+                //         this.cardList=data.data;
+                //     }
+                // })
             }else{
                 this.state='登录';
                 this.show=false;
-                const cards= this.$cookies.get("cards");
-                if(cards){
-                    const cartJson=JSON.parse(cards);
-                    this.cardList=cartJson.length;
-                }
+                // const cards= this.$cookies.get("cards");
+                // if(cards){
+                //     const cartJson=JSON.parse(cards);
+                //     this.cardList=cartJson.length;
+                // }
 
             }
 
@@ -77,6 +77,7 @@
         },methods:{
             logout:function () {
                 this.$cookies.remove("token");
+                window.location.reload();
                 layer.msg("用户已退出");
             },
             toOrder:function () {

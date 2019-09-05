@@ -9,6 +9,7 @@
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="img" jdbcType="VARCHAR" property="img" />
     <result column="sort" jdbcType="INTEGER" property="sort" />
+    <result column="wid" jdbcType="VARCHAR" property="wid" />
     <result column="is_delete" jdbcType="INTEGER" property="isDelete" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />

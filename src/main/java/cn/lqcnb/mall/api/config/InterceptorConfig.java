@@ -2,6 +2,7 @@ package cn.lqcnb.mall.api.config;
 
 import cn.lqcnb.mall.api.interceptor.AdminAuthenticationInterceptor;
 import cn.lqcnb.mall.api.interceptor.AdminLoginInterceptor;
+import cn.lqcnb.mall.api.interceptor.AliPayInterceptor;
 import cn.lqcnb.mall.api.interceptor.AuthenticationInterceptor;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +26,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**");
         registry.addInterceptor(new AdminLoginInterceptor()).addPathPatterns("/views/index.html")
                 .excludePathPatterns("/css/**", "/img/**", "/js/**", "/plugin/**", "/fonts/**");
+        registry.addInterceptor(new AliPayInterceptor()).addPathPatterns("/api/alipay/**");
     }
 
 

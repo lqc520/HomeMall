@@ -28,11 +28,11 @@
         <javaClientGenerator targetPackage="cn.lqcnb.mall.api.mapper" targetProject=".\src\main\java" type="XMLMAPPER"/>
 
         <!-- 指定数据库表-->
-        <table tableName="mall_goods" domainObjectName="Goods"/>
+<!--        <table tableName="mall_goods" domainObjectName="Goods"/>-->
 <!--        <table tableName="mall_category" domainObjectName="Category"/>-->
 <!--        <table tableName="mall_sort" domainObjectName="Sort"/>-->
 
-<!--        <table tableName="mall_member" domainObjectName="Member"/>-->
+<!--        <table tableName="mall_comment" domainObjectName="Comment"/>-->
 <!--        <table tableName="mall_card" domainObjectName="Card"/>-->
 <!--        <table tableName="mall_address" domainObjectName="Address"/>-->
 <!--        <table tableName="mall_order" domainObjectName="Order"/>-->

@@ -69,6 +69,9 @@ public class GoodsService extends AbstractService<Goods> {
         }
     }
 
+    public List<Goods> search(String name){
+        return goodsMapper.search(name);
+    }
 
 
 

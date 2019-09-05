@@ -12,6 +12,8 @@ public class Sort {
      */
     private String name;
 
+    private String img;
+
     /**
      * 大分类id
      */
@@ -48,6 +50,20 @@ public class Sort {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * @return img
+     */
+    public String getImg() {
+        return img;
+    }
+
+    /**
+     * @param img
+     */
+    public void setImg(String img) {
+        this.img = img;
     }
 
     /**

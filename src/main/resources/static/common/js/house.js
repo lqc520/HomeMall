@@ -183,14 +183,14 @@ layui.define(['element', 'carousel', 'table', 'util','cookie'], function(exports
   });
   
   //我的收藏——删除
-  $(".house-usercol").find(".layui-tab-content").find(".goods").each(function(){
-    $(this).children(".del").on('click', function(){
-      $(this).parent("div").parent("div").remove();
-    });
-  });
-  
+  // $(".house-usercol").find(".layui-tab-content").find(".goods").each(function(){
+  //   $(this).children(".del").on('click', function(){
+  //     $(this).parent("div").parent("div").remove();
+  //   });
+  // });
+  //
   // //地址管理——表格
-  // //  http://localhost:8080/api/address/
+  // //  http://mall.lqcnb.cn/api/address/
   // table.render({
   //   elem: '#user-address'
   //   ,url:  ''
@@ -265,7 +265,20 @@ layui.define(['element', 'carousel', 'table', 'util','cookie'], function(exports
   // });
   table.on('tool(house-user-order)', function(obj){
     var data = obj.data;
-
+    console.log(data);
+    /*==============评价====================*/
+    var rate = layui.rate;
+    //渲染
+    var stat=4;
+    var ins1 = rate.render({
+      elem: '#rate',  //绑定元素
+      choose: function(value){
+        stat=value;
+        if(value > 4) layer.msg("谢谢你的认可，欢迎再次光临");
+        if(value < 4) layer.msg("我们会持续改善 请继续关注我们")
+      }
+    });
+    /*==============评价====================*/
     if(obj.event === 'check'){
       layer.open({
         type: 2
@@ -274,30 +287,44 @@ layui.define(['element', 'carousel', 'table', 'util','cookie'], function(exports
       });
     }else if(obj.event === 'evaluate'){
       layer.open({
-        title:'收货并评价'+data.id
+        title:'评价商品'
         ,type: 1
         ,content: $('#take')
         ,area: ['500px', '300px']
         ,btn:['确定','取消']
         ,yes: (index,layero) =>{
           $.ajax({
-            url:'http://mall.lqcnb.cn/api/order/updateOrderStates',
+            url:'http://mall.lqcnb.cn/api/comment/add',
             data:{
-              orderNumber:data.order_number
+              star:stat,
+              content:$('#remarks').val(),
+              goodsId:data.goods_id,
+              memberId:data.member_id,
+              oid:data.order_number
             },success:function (data) {
-              layer.msg(data.msg);
+              layer.msg("评价成功");
             }
-
           });
+
+
           table.reload('house-user-order');
           layer.close(index);
 
         }
       });
+    }else{
+      $.ajax({
+        url:'http://mall.lqcnb.cn/api/order/updateOrderStates',
+        data:{
+          orderNumber:data.order_number
+        },success:function (data) {
+          layer.msg(data.msg)
+        }
+      });
     }
   });
 
- // 购物车——表格http://localhost:8080/api/card/getCards
+ // 购物车——表格http://mall.lqcnb.cn/api/card/getCards
   table.render({
     elem: '#house-usershop-table'
     ,url:  'http://mall.lqcnb.cn/api/card/getCards'

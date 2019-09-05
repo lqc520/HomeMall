@@ -25,7 +25,7 @@ public class LayUI {
        return new LayUI("ok",0,count,data);
     }
     public static LayUI error() {
-        return new LayUI("error",1,null,null);
+        return new LayUI("error",1,"0",null);
     }
 
     public LayUI() {

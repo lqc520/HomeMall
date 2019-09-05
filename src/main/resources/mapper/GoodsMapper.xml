@@ -64,14 +64,21 @@
           <if test="name != '' and name != null ">
             and g.name like concat("%",#{name},"%")
           </if>
-          <if test="categoryId != '' and categoryId != null and categoryId != -1">
-            and g.category_id = #{categoryId}
-          </if>
-          <if test="sortId != '' and sortId != null and sortId != -1" >
-            and g.sort_id = #{sortId}
+            <if test="categoryId != '' and categoryId != null and categoryId != -1">
+                and g.category_id = #{categoryId}
+            </if>
+            <if test="sortId != '' and sortId != null and sortId != -1" >
+                and g.sort_id = #{sortId}
           </if>
         </where>
 
     </select>
-
+    <select id="search" resultType="cn.lqcnb.mall.api.entity.Goods" parameterType="String">
+        select * from mall_goods
+        <where>
+            <if test="_parameter!=null and _parameter !='' and _parameter!='-1' ">
+                name like concat("%",#{name},"%")
+            </if>
+        </where>
+    </select>
 </mapper>

@@ -24,4 +24,15 @@ public class CardService extends AbstractService<Card> {
         return cardMapper.updateByExampleSelective(card,example)>0;
     }
 
+    public boolean updateCount(Card cart){
+        Example example = new Example(Card.class);
+        example.createCriteria().andEqualTo("goodsId",cart.getGoodsId()).andEqualTo("memberId",cart.getMemberId());
+        return cardMapper.updateByExampleSelective(cart,example)>0;
+    }
+
+    public Card cheCart(Card cart) {
+        Example example = new Example(Card.class);
+        example.createCriteria().andEqualTo("goodsId",cart.getGoodsId()).andEqualTo("memberId",cart.getMemberId());
+        return cardMapper.selectOneByExample(example);
+    }
 }

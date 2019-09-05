@@ -4,6 +4,8 @@ import cn.lqcnb.mall.api.entity.Goods;
 import cn.lqcnb.mall.api.service.GoodsService;
 import cn.lqcnb.mall.common.entity.LayUI;
 import cn.lqcnb.mall.common.entity.R;
+import cn.lqcnb.mall.common.utils.UploadLocalUtil;
+import cn.lqcnb.mall.common.utils.UploadUtil;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +43,24 @@ public class GoodsController {
     @GetMapping("/list")
     public List<Goods> findAll(){
         return goodsService.findAll();
+    }
+
+
+    @ApiOperation(value = "获取类别商品数据")
+    @ApiImplicitParam(name = "id",value = "类别id",paramType = "path")
+    @GetMapping("/getListBySortId/{id}")
+    public List<Goods> getListBySortId(@PathVariable Integer id){
+        Goods params = new Goods();
+        params.setSortId(id);
+        return goodsService.findList(params);
+    }
+
+
+    @ApiOperation(value = "获取类别商品数据")
+    @ApiImplicitParam(name = "name",value = "商品名",paramType = "path")
+    @GetMapping("/search/{name}")
+    public List<Goods> getSearchByName(@PathVariable String name){
+       return goodsService.search(name);
     }
 
 
@@ -129,7 +149,12 @@ public class GoodsController {
         if(file.isEmpty()){
             return R.error();
         }
-        return R.ok("ok",goodsService.addImg(file));
+        //阿里云 linux云端部署上传到阿里云oss
+        String AliPath = UploadUtil.upload(file,"mall");
+        //win10 本地部署 上传到本地资源
+//        String winPath = UploadLocalUtil.addImg(file);
+        return R.ok("ok", AliPath);
+
     }
 
 
@@ -139,7 +164,11 @@ public class GoodsController {
         if(file.length!=0){
             String detail="";
            for(MultipartFile f:file){
-               detail +=  goodsService.addImg(f)+",";
+//               detail +=  goodsService.addImg(f)+",";
+               //阿里云 linux云端部署上传到阿里云oss
+               detail += UploadUtil.upload(f,"mall")+",";
+               //win10 本地部署 上传到本地资源
+//               detail += UploadLocalUtil.addImg(f);
 
            }
             System.out.println(detail);
@@ -193,4 +222,8 @@ public class GoodsController {
         }
         return R.error();
     }
+
+
+
+
 }

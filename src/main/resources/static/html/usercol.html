@@ -42,9 +42,9 @@
           <div class="layui-col-xs3" v-for="v in collection">
             <div class="goods">
               <img :src="v.img">
-              <p>{{v.name}}</p>
+              <p><a href="javascript:void(0)" @click="toDetail(v.id)">{{v.name}}</a></p>
               <p class="price">￥{{v.price}}</p>
-              <span class="del" @clikc="del()">&times;</span>
+              <span class="del" @click="remove(v.id)">&times;</span>
             </div>    
           </div>
 
@@ -88,10 +88,8 @@
       //获取令牌
       this.token=this.$cookies.get("token");
       //全局配置
-      // axios.defaults.baseURL ='http://mall.jynb.xyz:9000/api/';
-      // axios.defaults.baseURL ='http://mall.lqcnb.cn:9000/api/';
-      // axios.defaults.baseURL ='http://localhost:8080/api/';
       axios.defaults.baseURL ='http://mall.lqcnb.cn/api/';
+      // axios.defaults.baseURL ='http://mall.lqcnb.cn/api/';
       // axios.defaults.timeout =6000;
       axios.interceptors.request.use(config => {
                 config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
@@ -109,8 +107,14 @@
         })
       }
     },methods:{
-      del:function () {
-        layer.msg("删除");
+      remove:function (id) {
+        axios.get(`/collection/delete/${id}`).then(response =>{
+         layer.msg(response.data.msg);
+          window.location.reload();
+        })
+      },
+      toDetail:function (id) {
+        window.location="detail.html?id="+id;
       }
     }
   })

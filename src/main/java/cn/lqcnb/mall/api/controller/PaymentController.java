@@ -1,5 +1,6 @@
 package cn.lqcnb.mall.api.controller;
 
+
 import cn.lqcnb.mall.api.entity.Order;
 import cn.lqcnb.mall.api.entity.Payment;
 import cn.lqcnb.mall.api.service.OrderService;
@@ -141,8 +142,6 @@ public class PaymentController {
 
 
     }
-
-}
 //                    "charset": "utf-8",
 //                    "out_trade_no": "1103",
 //                    "method": "alipay.trade.page.pay.return",
@@ -155,3 +154,10 @@ public class PaymentController {
 //                    "sign_type": "RSA2",
 //                    "seller_id": "2088102178890583",
 //                    "timestamp": "2019-08-26 13:45:23"
+/*===========================IJPay==============================================================================*/
+
+
+}
+
+
+

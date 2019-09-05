@@ -4,6 +4,7 @@ import cn.lqcnb.mall.api.annotation.UserLoginToken;
 import cn.lqcnb.mall.api.entity.Card;
 import cn.lqcnb.mall.api.entity.Goods;
 import cn.lqcnb.mall.api.service.CardService;
+import cn.lqcnb.mall.api.service.GoodsService;
 import cn.lqcnb.mall.common.entity.R;
 import cn.lqcnb.mall.common.utils.TokenUtil;
 import com.alibaba.fastjson.JSONArray;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +44,11 @@ import java.util.Map;
 public class CardController {
     @Autowired
     private CardService cardService;
+    @Autowired
+    private GoodsService GoodsService;
 
+    // 废弃
+    @ApiOperation("获取购物车数据")
     @GetMapping("getCards")
     public Map getCards(@CookieValue(required = false) String cards){
         System.out.println(cards);
@@ -77,6 +83,34 @@ public class CardController {
 
         return map;
     }
+
+
+    @UserLoginToken
+    @ApiOperation("获取购物车数据")
+    @GetMapping("getCardList")
+    @ApiImplicitParam(name = "token",value = "令牌",paramType = "header",required = true)
+    public R getCardList(@RequestHeader String token) {
+        Card cart = new Card();
+        cart.setMemberId(Integer.parseInt(TokenUtil.getUserId(token)));
+        List<Card> CardList = cardService.findList(cart);
+        if(CardList.size()>0){
+            List<Card> resultList=new LinkedList<>();
+            for(Card card : CardList){
+                //检测库存 和价格变动
+                Goods curGoods = GoodsService.getById(card.getGoodsId());
+                if(Integer.parseInt(card.getNumber())>curGoods.getStock()){
+                    card.setNumber(String.valueOf(curGoods.getStock()));
+                }
+                if(!card.getPrice().equals(curGoods.getPrice())){
+                    card.setPrice(curGoods.getPrice().toString());
+                }
+                resultList.add(card);
+            }
+            return R.ok(resultList);
+        }
+        return R.error();
+    }
+
 
     @UserLoginToken
     @GetMapping("updateNumber/{goodsId}/{number}")
@@ -118,5 +152,46 @@ public class CardController {
         params.setMemberId(Integer.parseInt(TokenUtil.getUserId(token)));
         List<Card> list = cardService.findList(params);
         return R.ok(list.size());
+    }
+
+
+    @UserLoginToken
+    @GetMapping("delete/{id}")
+    @ApiOperation("获取商品数量")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token",value = "令牌",paramType = "header",required = true),
+            @ApiImplicitParam(name = "id",value = "购物车id",paramType = "query",required = true)
+    })
+    public R delete(@RequestHeader String token,@PathVariable Integer id){
+        if(cardService.deleteById(id)){
+            return R.ok();
+        }
+        return R.error();
+    }
+
+
+    @UserLoginToken
+    @GetMapping("addCart")
+    @ApiOperation("商品加入购物车")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "token",value = "令牌",paramType = "header",required = true),
+            @ApiImplicitParam(name = "cart",value = "商品",paramType = "query",required = true)
+    })
+    public R addCart(@RequestHeader String token,Card cart){
+        cart.setMemberId(Integer.parseInt(TokenUtil.getUserId(token)));
+        Card curCart = cardService.cheCart(cart);
+        if(curCart!=null){
+            Card params = new Card();
+            params.setNumber(String.valueOf(Integer.parseInt(curCart.getNumber())+Integer.parseInt(cart.getNumber())));
+            if(cardService.updateCount(params)){
+                return R.ok();
+            }
+            return R.error();
+        }else{
+            if(cardService.add(cart)){
+                return R.ok();
+            }
+            return R.error();
+        }
     }
 }

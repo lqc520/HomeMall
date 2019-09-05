@@ -137,7 +137,7 @@ layui.define(['form', 'upload'], function(exports){
     
     //提交修改
     admin.req({
-      url: 'http://localhost:8080/api/user/updatePwd'
+      url: 'http://mall.lqcnb.cn/api/user/updatePwd'
       ,type:'post'
       ,data: obj.field
       ,success: function(res){

@@ -157,12 +157,12 @@ public class OrderController {
     @GetMapping("getOrderList")
     @ApiOperation(value = "获取订单信息")
     @ApiImplicitParam(name = "Order", value = "查询参数信息", paramType = "order")
-    public R getOrderList(Order order){
+    public LayUI getOrderList(Order order){
         List<Map> orderList = orderService.getOrderList(order);
         if(orderList.size()!=0){
-          return R.ok(orderList);
+          return LayUI.ok(String.valueOf(orderList.size()),orderList);
         }
-        return R.error();
+        return LayUI.error();
     }
 
 
@@ -196,7 +196,7 @@ public class OrderController {
     @ApiOperation(value = "订单收货")
     @ApiImplicitParam(name = "Order", value = "订单", paramType = "order")
     public R updateOrderStates(Order order){
-        order.setOrderStatus(4);
+        order.setOrderStatus(3);
         order.setFinishTime(new Date());
         if(orderService.update(order)){
             return R.ok();

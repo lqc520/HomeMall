@@ -47,7 +47,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.47</version>
+            <version>1.2.58</version>
         </dependency>
 
         <!-- mysql jdbc-->
@@ -138,6 +138,12 @@
             <artifactId>mail</artifactId>
             <version>1.4.7</version>
         </dependency>
+        <!-- 邮箱 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+            <version>2.1.7.RELEASE</version>
+        </dependency>
 
         <!-- lang3 -->
         <dependency>
@@ -162,14 +168,29 @@
         </dependency>
 
         <!-- alipay -->
-        <!-- https://mvnrepository.com/artifact/com.alipay.sdk/alipay-sdk-java -->
         <dependency>
             <groupId>com.alipay.sdk</groupId>
             <artifactId>alipay-sdk-java</artifactId>
-            <version>3.7.4.ALL</version>
+            <version>3.7.110.ALL</version>
+        </dependency>
+        <!-- ==================================IJPay========================    -->
+        <dependency>
+            <groupId>com.github.javen205</groupId>
+            <artifactId>IJPay</artifactId>
+            <version>1.1.6</version>
         </dependency>
 
-
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.2</version>
+        </dependency>
+            <!-- 安全 加密-->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>4.0.12</version>
+        </dependency>
 
         <!-- 第三方登录 -->
         <dependency>
@@ -178,12 +199,9 @@
             <version>1.10.1</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.github.javen205/IJPay-AliPay -->
-<!--        <dependency>-->
-<!--            <groupId>com.github.javen205</groupId>-->
-<!--            <artifactId>IJPay-AliPay</artifactId>-->
-<!--            <version>2.1.2</version>-->
-<!--        </dependency>-->
+
+
+
 
 
         <!-- https://mvnrepository.com/artifact/com.niezhiliang.easy.pay/easy-pay -->

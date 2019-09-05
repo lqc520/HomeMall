@@ -66,7 +66,7 @@
                     <li class="th th-chk">
                         <div class="select-all">
                             <div class="cart-checkbox">
-                                <input class="CheckBoxShop check getStatic" :cid="i" type="checkbox" num="all" name="select-all" value="true">
+                                <input class="CheckBoxShop check getStatic" :cid="i" :did="v.id" type="checkbox" num="all" name="select-all" value="true">
                             </div>
                         </div>
                     </li>
@@ -93,7 +93,7 @@
                         <span class="sum">{{v.price * v.number | priceFormat}}</span>
                     </li>
                     <li class="th th-op">
-                        <span class="dele-btn" @click="remove(i)">删除</span>
+                        <span class="dele-btn" @click="remove(i,v.id)">删除</span>
                     </li>
                 </ul>
             </div>
@@ -160,20 +160,10 @@
 
 <script>
     //全局配置
-    // axios.defaults.baseURL ='http://mall.jynb.xyz:9000/api/';
-    // axios.defaults.baseURL ='http://mall.lqcnb.cn:9000/api/';
-    // axios.defaults.baseURL ='http://localhost:8080/api/';
+    // axios.defaults.baseURL ='http://localhost:9989/api/';
     axios.defaults.baseURL ='http://mall.lqcnb.cn/api/';
     axios.defaults.timeout =6000;
-    axios.interceptors.request.use(config => {
-            config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
-            if (this.token) {
-                config.headers.common['token'] =this.token;
-            }
-            return config
-        },
-        err => {return Promise.reject(err)}
-    );
+
     layui.config({
         base: '/common/js/' //你存放新模块的目录，注意，不是layui的模块目录
     }).use(['car','house'],function(){
@@ -185,6 +175,7 @@
         data:{
             like:[]
         },mounted() {
+            //猜你喜欢
             axios.get(`goods/cartlike`).then(
                 response => {
                     this.like=response.data.data;
@@ -206,10 +197,24 @@
             }
         },
         mounted(){
-            this.cardList=JSON.parse(this.$cookies.get("cards"));
             this.token=this.$cookies.get("token");
-
-
+            axios.interceptors.request.use(config => {
+                    config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+                    if (this.token) {
+                        config.headers.common['token'] =this.token;
+                    }
+                    return config
+                },
+                err => {return Promise.reject(err)}
+            );
+            if(this.token){
+                axios.get('cart/getCardList').then(res=>{
+                    console.log(res.data);
+                    this.cardList=res.data.data;
+                })
+            }else{
+                this.cardList=JSON.parse(this.$cookies.get("cards"));
+            }
 
         },
         methods:{
@@ -270,10 +275,15 @@
 
                 console.log(number);
             },
-            remove:function(id){
+            remove:function(id,cid){
                 layer.confirm('你确定要删除吗',{icon: 3,
                     yes:(index,layero)=>{
                         layer.close(index);
+                        if(this.token){
+                            axios.get(`cart/delete/${cid}`).then(res=>{
+
+                            })
+                        }
                         this.cardList.splice(id,1);
                         this.$cookies.set("cards",JSON.stringify(this.cardList),60 * 60 * 24 * 7);
                     }
@@ -291,26 +301,50 @@
                 //         $('input[type=checkbox]:checked').length + "个，其中有：" + $(this).attr("cid"));
                 // });
                 //方法2
+                // 获取选中商品的id
                 var ids=[];
                 $.each($('input:checkbox'),function(){
                     if(this.checked && $(this).attr("cid")!=undefined){
                         ids.push($(this).attr("cid"));
                     }
                 });
-                console.log(ids);
+                var dids=[];
+                if(this.token){
+                    $.each($('input:checkbox'),function(){
+                        if(this.checked && $(this).attr("did")!=undefined){
+                            dids.push($(this).attr("did"));
+                        }
+                    });
+                }
+                console.log(dids);
                 if(ids.length==0){
                     layer.msg("请选择商品");
                 }else{
                     layer.confirm('你确定要批量删除吗',{icon: 3,btn:['确定','取消'],title:"提示"},(index)=>{
-                            layer.close(index);
                             if(ids.length==this.cardList.length){
                                 this.$cookies.set("cards",[]);
+                                if(this.token){
+                                    for(d of dids){
+                                        axios.get(`cart/delete/${d}`).then(res=>{
+
+                                        })
+                                    }
+                                }
                             }else{
                                 for(i of  ids){
                                     this.cardList.splice(i,1);
                                     this.$cookies.set("cards",JSON.stringify(this.cardList),60 * 60 * 24 * 7);
                                 }
+                                if(this.token){
+                                    for(d of dids){
+                                        axios.get(`cart/delete/${d}`).then(res=>{
+
+                                        })
+                                    }
+                                }
                             }
+                            layer.close(index);
+                            window.location.reload();
                         });
                  }
 

@@ -9,24 +9,21 @@ public class Member {
     private Integer id;
 
     /**
-     * 用户名
+     * 昵称
      */
-    private String username;
-
-    /**
-     * 密码
-     */
-    private String password;
+    private String nickname;
 
     /**
      * 邮箱
      */
     private String email;
 
-    private String mobile;
+    /**
+     * 头像
+     */
+    private String avatar;
 
-    @Column(name = "real_name")
-    private String realName;
+    private String mobile;
 
     /**
      * 是否激活  0激活  1未激活
@@ -66,60 +63,22 @@ public class Member {
         this.id = id;
     }
 
-    public Member(String mobile) {
-        this.mobile = mobile;
-    }
-
-    public Member() {
-    }
-
-    public Member(Integer id, String username, String password, String email, String mobile, String realName, Integer isActivate, Integer isDelete, Date createTime, Date updateTime) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.mobile = mobile;
-        this.realName = realName;
-        this.isActivate = isActivate;
-        this.isDelete = isDelete;
-        this.createTime = createTime;
-        this.updateTime = updateTime;
+    /**
+     * 获取昵称
+     *
+     * @return nickname - 昵称
+     */
+    public String getNickname() {
+        return nickname;
     }
 
     /**
-     * 获取用户名
+     * 设置昵称
      *
-     * @return username - 用户名
+     * @param nickname 昵称
      */
-    public String getUsername() {
-        return username;
-    }
-
-    /**
-     * 设置用户名
-     *
-     * @param username 用户名
-     */
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    /**
-     * 获取密码
-     *
-     * @return password - 密码
-     */
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * 设置密码
-     *
-     * @param password 密码
-     */
-    public void setPassword(String password) {
-        this.password = password;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 
     /**
@@ -141,6 +100,24 @@ public class Member {
     }
 
     /**
+     * 获取头像
+     *
+     * @return avatar - 头像
+     */
+    public String getAvatar() {
+        return avatar;
+    }
+
+    /**
+     * 设置头像
+     *
+     * @param avatar 头像
+     */
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    /**
      * @return mobile
      */
     public String getMobile() {
@@ -152,20 +129,6 @@ public class Member {
      */
     public void setMobile(String mobile) {
         this.mobile = mobile;
-    }
-
-    /**
-     * @return real_name
-     */
-    public String getRealName() {
-        return realName;
-    }
-
-    /**
-     * @param realName
-     */
-    public void setRealName(String realName) {
-        this.realName = realName;
     }
 
     /**

@@ -1,0 +1,50 @@
+<wxs src="../common/utils.wxs" module="tools" />
+<view class="main">
+    <swiper indicator-dots="true" autoplay="true" interval="{{interval}}" duration="{{duration}}" circular="true">
+        <block wx:for="{{imgUrls}}" wx:key="{{index}}">
+            <swiper-item>
+                <image src="{{item}}" class="slide-image" width="100%"/>
+            </swiper-item>
+        </block>
+    </swiper>
+    <view class="search">
+        <navigator url="search/search">
+            <view class="search-text">
+                <icon class="weui-icon-search_in-box search-icon" type="search" size="14"></icon>
+                搜 索
+            </view>
+        </navigator>
+    </view>
+    <view class="selected">
+        <view class="select-title"><text>精选主题</text></view>
+        <view class="select-top">
+            <view class="select-top-small">
+                <navigator url="list/list?id=2">
+                    <image src="/common/img/home_img19.jpg"></image>
+                </navigator>
+            </view>
+            <view class="select-top-small">
+                <navigator url="list/list?id=3">
+                    <image src="/common/img/home_img18.jpg"></image>
+                </navigator>
+            </view>
+        </view>
+        <view class="select-bottom">
+            <navigator url="list/list?id=1">
+                <image src="/common/img/home_img17.jpg"></image>
+            </navigator>
+        </view>
+    </view>
+    <view class="newest">
+        <view class="newest-title"><text>最近新品</text></view>
+        <view class="newest-box">
+            <view class="newest-list" wx:for="{{newList}}">
+                <navigator url="details/details?id={{item.id}}">
+                    <image src="{{item.img}}"></image>
+                    <view class="newest-text"><text>{{tools.sub(item.name)}}</text></view>
+                    <view class="newest-text"><text>￥ {{item.price}}</text></view>
+                </navigator>
+            </view>
+        </view>
+    </view>
+</view>
