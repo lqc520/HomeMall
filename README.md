@@ -98,14 +98,6 @@
 
 ![sms](https://github.com/lqc520/HomeMall/blob/master/assess/sms.jpg)
 
-### 地址管理
-
-![1567347729720](https://github.com/lqc520/HomeMall/blob/master/assess/1567347729720.png)
-
-### 添加地址
-
-![1567347755660](https://github.com/lqc520/HomeMall/blob/master/assess/1567347755660.png)
-
 ### 编辑地址
 
 ![1567347782005](https://github.com/lqc520/HomeMall/blob/master/assess/1567347782005.png)
