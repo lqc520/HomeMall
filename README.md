@@ -2,6 +2,9 @@
 
 ##### 本项目是一个前后端分离项目 前台有LayUI做界面Vue数据渲染 后台SpringBoot+Swagger2 做api接口  JWT token做权限验证
 ![homemall](https://img.shields.io/badge/homemall-v1.0-yellow)
+![wxapp](https://img.shields.io/badge/wxapp-v1.0-yellow)
+![study](https://img.shields.io/badge/%E4%BB%85%E6%94%AF%E6%8C%81%E5%AD%A6%E4%B9%A0%E7%94%A8%E9%80%94-v1.0-yellowgreen)
+
 ## 技术栈
 
 - SpingBoot
@@ -20,7 +23,7 @@
 
 - 支付宝沙箱
 
-- AliOSS
+- Alioss
 
 - Vue
 
