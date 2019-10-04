@@ -1,7 +1,7 @@
 #                项目名称：商城
 
 ##### 本项目是一个前后端分离项目 前台有LayUI做界面Vue数据渲染 后台SpringBoot+Swagger2 做api接口  JWT token做权限验证
-
+![homemall](https://img.shields.io/badge/homemall-v1.0-yellow)
 ## 技术栈
 
 - SpingBoot
