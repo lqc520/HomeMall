@@ -20,6 +20,8 @@
 
 - 支付宝沙箱
 
+- AliOSS
+
 - Vue
 
 - LayUI
