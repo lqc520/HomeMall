@@ -11,10 +11,10 @@ import java.io.IOException;
 public class BaseSMS {
     public static String getSMSCode(String tel,Integer templateIdType,Integer codeCount) {
         // 短信应用SDK AppID
-        int appid =1400141744; // 1400开头
+        int appid =1400; // 1400开头
 
         // 短信应用SDK AppKey
-        String appkey = "4de1cbc179185b85df9a2396b4721cdb";
+        String appkey = "xxx";
 
         // 需要发送短信的手机号码
         String[] phoneNumbers = {tel};
@@ -23,7 +23,7 @@ public class BaseSMS {
         int templateId = templateIdType; // NOTE: 这里的模板ID`7839`只是一个示例，真实的模板ID需要在短信控制台中申请
         //templateId7839对应的内容是"您的验证码是: {1}"
         // 签名
-        String smsSign = "林启澄的学习乐园";
+        String smsSign = "xxx";
         String code = RandomStringUtils.random(codeCount,false, true);
         try {
             String[] params = {code,"5"};//数组具体的元素个数和模板中变量个数必须一致，例如事例中templateId:5678对应一个变量，参数数组中元素个数也必须是一个
